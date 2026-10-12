@@ -1,0 +1,972 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crear Cuenta | Motato Electronics</title>
+
+    <!-- Estilos globales del proyecto -->
+    <link rel="stylesheet" href="/css/style.css">
+
+    <!-- Iconos FontAwesome -->
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+
+    <style>
+        /* =====================================================
+           DISEÑO GENERAL DE LA PÁGINA DE REGISTRO
+           - Fondo con gradiente suave
+           - Tarjeta blanca centrada
+           - Estilo moderno consistente con el login
+           ===================================================== */
+
+        body.register-page {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #e8eef9 0%, #f4f7fb 50%, #eef3fb 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding: 30px 0;
+        }
+
+        .register-wrapper {
+            width: 100%;
+            max-width: 520px;
+            padding: 20px;
+        }
+
+        /* Tarjeta principal */
+        .register-card {
+            background: #ffffff;
+            border-radius: 20px;
+            padding: 40px 38px;
+            box-shadow: 0 15px 50px rgba(30, 58, 138, 0.12);
+            border: 1px solid rgba(30, 58, 138, 0.05);
+        }
+
+        /* Encabezado */
+        .register-header {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+        .register-header h1 {
+            color: #1E3A8A;
+            font-size: 1.6rem;
+            margin: 0 0 6px 0;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+        .register-header p {
+            color: #6b7280;
+            font-size: .85rem;
+            margin: 0;
+        }
+
+        /* =====================================================
+           PESTAÑAS (Registro tradicional / Rápido con correo)
+           ===================================================== */
+        .tabs {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            background: #f3f4f6;
+            padding: 6px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+        }
+
+        .tab-btn {
+            padding: 12px 14px;
+            border: none;
+            border-radius: 8px;
+            background: transparent;
+            color: #6b7280;
+            font-size: .85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all .25s ease;
+            font-family: inherit;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .tab-btn.active {
+            background: #ffffff;
+            color: #1E3A8A;
+            box-shadow: 0 2px 8px rgba(30, 58, 138, 0.1);
+        }
+
+        .tab-btn:hover:not(.active) {
+            color: #374151;
+        }
+
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+
+        /* =====================================================
+           CAMPOS DEL FORMULARIO
+           ===================================================== */
+        .register-card label {
+            display: block;
+            font-size: .85rem;
+            color: #1f2937;
+            margin-top: 14px;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .register-card label .req {
+            color: #dc2626;
+            margin-left: 2px;
+        }
+
+        .input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .input-wrapper input,
+        .input-wrapper select {
+            width: 100%;
+            padding: 13px 16px;
+            border: 1.5px solid #e5e7eb;
+            border-radius: 10px;
+            font-size: .95rem;
+            font-family: inherit;
+            background: #fafbfc;
+            transition: all .2s ease;
+            box-sizing: border-box;
+            color: #111827;
+        }
+
+        .input-wrapper input::placeholder {
+            color: #9ca3af;
+        }
+
+        .input-wrapper input:focus,
+        .input-wrapper select:focus {
+            outline: none;
+            border-color: #1E3A8A;
+            background: #ffffff;
+            box-shadow: 0 0 0 4px rgba(30, 58, 138, 0.08);
+        }
+
+        .toggle-password {
+            position: absolute;
+            right: 15px;
+            cursor: pointer;
+            color: #9ca3af;
+            font-size: 1rem;
+            padding: 4px;
+            transition: color .2s;
+        }
+        .toggle-password:hover { color: #1E3A8A; }
+
+        .fila-doble {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .btn-primary-full {
+            width: 100%;
+            margin-top: 22px;
+            padding: 15px;
+            border: none;
+            border-radius: 10px;
+            background: #1E3A8A;
+            color: #ffffff;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all .3s ease;
+            letter-spacing: 0.3px;
+        }
+
+        .btn-primary-full:hover {
+            background: #1e40af;
+            transform: translateY(-1px);
+            box-shadow: 0 8px 20px rgba(30, 58, 138, 0.25);
+        }
+
+        .btn-primary-full:disabled {
+            background: #9ca3af;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .login-link {
+            text-align: center;
+            margin-top: 22px;
+            font-size: .85rem;
+            color: #6b7280;
+        }
+
+        .login-link a {
+            color: #1E3A8A;
+            font-weight: 700;
+            text-decoration: underline;
+        }
+
+        .mensaje-registro {
+            margin-top: 14px;
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-size: .88rem;
+            display: none;
+            text-align: center;
+        }
+        .mensaje-error { background: #fee2e2; color: #991b1b; display: block; }
+        .mensaje-exito { background: #dcfce7; color: #166534; display: block; }
+        .mensaje-info  { background: #dbeafe; color: #1e40af; display: block; }
+
+        /* =====================================================
+           INDICADOR DE PASOS (registro rápido)
+           ===================================================== */
+        .paso-indicador {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin: 20px 0 25px 0;
+        }
+        .paso-indicador .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #e5e7eb;
+            transition: .3s;
+        }
+        .paso-indicador .dot.active {
+            background: #1E3A8A;
+            width: 28px;
+            border-radius: 5px;
+        }
+
+        .step-title {
+            color: #1E3A8A;
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin: 0 0 8px 0;
+            text-align: center;
+        }
+        .step-sub {
+            color: #6b7280;
+            font-size: .85rem;
+            text-align: center;
+            margin: 0 0 20px 0;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        .modal-actions button {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: .92rem;
+            font-weight: 600;
+            transition: all .2s;
+        }
+        .btn-secondary {
+            background: #f3f4f6;
+            color: #374151;
+        }
+        .btn-secondary:hover { background: #e5e7eb; }
+
+        /* =====================================================
+           INDICADOR DE REQUISITOS DE CONTRASEÑA
+           ===================================================== */
+        .password-requirements {
+            margin-top: 10px;
+            padding: 12px 14px;
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+            font-size: .8rem;
+            display: none;
+        }
+
+        .password-requirements.visible {
+            display: block;
+        }
+
+        .password-requirements .titulo {
+            color: #6b7280;
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: .78rem;
+        }
+
+        .password-requirements .req-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 3px 0;
+            color: #9ca3af;
+            transition: color .2s;
+        }
+
+        .password-requirements .req-item .icon {
+            font-size: .85rem;
+            width: 14px;
+            text-align: center;
+        }
+
+        .password-requirements .req-item.ok {
+            color: #16a34a;
+            font-weight: 600;
+        }
+
+        .password-requirements .req-item.fail {
+            color: #dc2626;
+        }
+
+        @media (max-width: 520px) {
+            .register-card {
+                padding: 30px 22px;
+                border-radius: 16px;
+            }
+            .register-header h1 { font-size: 1.35rem; }
+            .fila-doble { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body class="register-page">
+
+    <div class="register-wrapper">
+        <div class="register-card">
+
+            <!-- Encabezado -->
+            <div class="register-header">
+                <h1>MOTATO ELECTRONICS</h1>
+                <p>Crea tu cuenta y accede a nuestros servicios</p>
+            </div>
+
+            <!-- Pestañas -->
+            <div class="tabs">
+                <button type="button" class="tab-btn active"
+                        id="tabTradicional"
+                        onclick="cambiarTab('tradicional')">
+                    📝 Registro tradicional
+                </button>
+                <button type="button" class="tab-btn"
+                        id="tabRapido"
+                        onclick="cambiarTab('rapido')">
+                    ⚡ Rápido con correo
+                </button>
+            </div>
+            
+                        <!-- =====================================================
+                 PESTAÑA 1: REGISTRO TRADICIONAL
+                 ===================================================== -->
+            <div class="tab-content active" id="contenidoTradicional">
+
+                <form id="formTradicional" onsubmit="return false;">
+
+                    <!-- Nombre y Cédula -->
+                    <div class="fila-doble">
+                        <div>
+                            <label for="tNombre">
+                                Nombre completo <span class="req">*</span>
+                            </label>
+                            <div class="input-wrapper">
+                                <input type="text" id="tNombre"
+                                       placeholder="Ej: Juan Pérez" required>
+                            </div>
+                        </div>
+                        <div>
+                            <label for="tCedula">
+                                Cédula <span class="req">*</span>
+                            </label>
+                            <div class="input-wrapper">
+                                <input type="text" id="tCedula"
+                                       placeholder="Ej: 12345678" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Correo -->
+                    <label for="tCorreo">
+                        Correo electrónico <span class="req">*</span>
+                    </label>
+                    <div class="input-wrapper">
+                        <input type="email" id="tCorreo"
+                               placeholder="tu@correo.com" required>
+                    </div>
+
+                    <!-- Teléfono y Dirección -->
+                    <div class="fila-doble">
+                        <div>
+                            <label for="tTelefono">Teléfono</label>
+                            <div class="input-wrapper">
+                                <input type="text" id="tTelefono"
+                                       placeholder="Ej: 3001234567">
+                            </div>
+                        </div>
+                        <div>
+                            <label for="tDireccion">Dirección</label>
+                            <div class="input-wrapper">
+                                <input type="text" id="tDireccion"
+                                       placeholder="Ej: Calle 10 #20-30">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Contraseña con ojo e indicador de requisitos -->
+                    <label for="tPassword">
+                        Contraseña <span class="req">*</span>
+                    </label>
+                    <div class="input-wrapper">
+                        <input type="password" id="tPassword"
+                               placeholder="Crea una contraseña segura"
+                               onfocus="mostrarRequisitos('reqTPassword')"
+                               oninput="actualizarRequisitos('tPassword', 'reqTPassword')"
+                               required>
+                        <i class="fa-solid fa-eye toggle-password"
+                           id="toggleTPassword"
+                           onclick="togglePasswordField('tPassword', 'toggleTPassword')"></i>
+                    </div>
+
+                    <!-- Indicador de requisitos en vivo -->
+                    <div class="password-requirements" id="reqTPassword">
+                        <div class="titulo">Requisitos de seguridad:</div>
+                        <div class="req-item" data-req="length">
+                            <span class="icon">❌</span> Al menos 8 caracteres
+                        </div>
+                        <div class="req-item" data-req="upper">
+                            <span class="icon">❌</span> Una letra mayúscula
+                        </div>
+                        <div class="req-item" data-req="lower">
+                            <span class="icon">❌</span> Una letra minúscula
+                        </div>
+                        <div class="req-item" data-req="number">
+                            <span class="icon">❌</span> Un número
+                        </div>
+                    </div>
+
+                    <!-- Rol -->
+                    <label for="tRol">
+                        Tipo de cuenta <span class="req">*</span>
+                    </label>
+                    <div class="input-wrapper">
+                        <select id="tRol" required>
+                            <option value="CLIENTE" selected>👤 Cliente — Solicitar servicios</option>
+                            <option value="TECNICO">🔧 Técnico — Ofrecer servicios</option>
+                        </select>
+                    </div>
+
+                    <p style="font-size:.78rem; color:#92400e; background:#fef3c7; 
+                              padding:10px; border-radius:8px; margin-top:14px; line-height:1.4;">
+                        💡 <b>Nota:</b> los técnicos quedan en estado <b>PENDIENTE</b> 
+                        hasta que un administrador apruebe su cuenta.
+                    </p>
+
+                    <button type="button" class="btn-primary-full"
+                            onclick="registroTradicional()">
+                        Crear cuenta
+                    </button>
+
+                    <div id="msgTradicional" class="mensaje-registro"></div>
+                </form>
+
+                <div class="login-link">
+                    ¿Ya tienes una cuenta? <a href="/citas.html">Inicia sesión</a>
+                </div>
+            </div>
+
+            <!-- =====================================================
+                 PESTAÑA 2: REGISTRO RÁPIDO CON CORREO
+                 ===================================================== -->
+            <div class="tab-content" id="contenidoRapido">
+
+                <!-- Indicador de paso -->
+                <div class="paso-indicador">
+                    <div class="dot active" id="dotR1"></div>
+                    <div class="dot" id="dotR2"></div>
+                    <div class="dot" id="dotR3"></div>
+                </div>
+
+                <!-- PASO 1: correo -->
+                <div id="rapidoPaso1">
+                    <h3 class="step-title">
+                        <i class="fa-solid fa-envelope"></i> Verifica tu correo
+                    </h3>
+                    <p class="step-sub">
+                        Ingresa tu correo y te enviaremos un código de 6 dígitos.
+                    </p>
+
+                    <label for="rCorreo">
+                        Correo electrónico <span class="req">*</span>
+                    </label>
+                    <div class="input-wrapper">
+                        <input type="email" id="rCorreo"
+                               placeholder="tu@correo.com" required>
+                    </div>
+
+                    <button type="button" class="btn-primary-full"
+                            onclick="solicitarCodigoRegistro()">
+                        Enviar código
+                    </button>
+
+                    <div id="msgRapido1" class="mensaje-registro"></div>
+                </div>
+
+                <!-- PASO 2: código -->
+                <div id="rapidoPaso2" style="display:none;">
+                    <h3 class="step-title">
+                        <i class="fa-solid fa-shield-halved"></i> Verifica el código
+                    </h3>
+                    <p class="step-sub">
+                        Te enviamos un código a <b><span id="rCorreoMostrado"></span></b>
+                    </p>
+
+                    <label for="rCodigo">
+                        Código de 6 dígitos <span class="req">*</span>
+                    </label>
+                    <div class="input-wrapper">
+                        <input type="text" id="rCodigo"
+                               placeholder="000000" maxlength="6" required>
+                    </div>
+
+                    <button type="button" class="btn-primary-full"
+                            onclick="verificarCodigoRegistro()">
+                        Verificar código
+                    </button>
+
+                    <div id="msgRapido2" class="mensaje-registro"></div>
+
+                    <div class="modal-actions">
+                        <button type="button" class="btn-secondary"
+                                onclick="volverRapidoPaso1()">
+                            ← Atrás
+                        </button>
+                    </div>
+                </div>
+
+                <!-- PASO 3: completar datos -->
+                <div id="rapidoPaso3" style="display:none;">
+                    <h3 class="step-title">
+                        <i class="fa-solid fa-user-plus"></i> Completa tus datos
+                    </h3>
+                    <p class="step-sub">
+                        Solo faltan unos datos para terminar tu registro.
+                    </p>
+
+                    <!-- Correo verificado (solo lectura) -->
+                    <label>Correo verificado</label>
+                    <div class="input-wrapper">
+                        <input type="email" id="rCorreoFinal"
+                               readonly
+                               style="background:#f3f4f6; color:#6b7280; cursor:not-allowed;">
+                    </div>
+
+                    <!-- Nombre y Cédula -->
+                    <div class="fila-doble">
+                        <div>
+                            <label for="rNombre">
+                                Nombre completo <span class="req">*</span>
+                            </label>
+                            <div class="input-wrapper">
+                                <input type="text" id="rNombre"
+                                       placeholder="Ej: Juan Pérez" required>
+                            </div>
+                        </div>
+                        <div>
+                            <label for="rCedula">
+                                Cédula <span class="req">*</span>
+                            </label>
+                            <div class="input-wrapper">
+                                <input type="text" id="rCedula"
+                                       placeholder="Ej: 12345678" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Teléfono y Dirección -->
+                    <div class="fila-doble">
+                        <div>
+                            <label for="rTelefono">Teléfono</label>
+                            <div class="input-wrapper">
+                                <input type="text" id="rTelefono"
+                                       placeholder="Ej: 3001234567">
+                            </div>
+                        </div>
+                        <div>
+                            <label for="rDireccion">Dirección</label>
+                            <div class="input-wrapper">
+                                <input type="text" id="rDireccion"
+                                       placeholder="Ej: Calle 10 #20-30">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Contraseña con ojo e indicador de requisitos -->
+                    <label for="rPassword">
+                        Contraseña <span class="req">*</span>
+                    </label>
+                    <div class="input-wrapper">
+                        <input type="password" id="rPassword"
+                               placeholder="Crea una contraseña segura"
+                               onfocus="mostrarRequisitos('reqRPassword')"
+                               oninput="actualizarRequisitos('rPassword', 'reqRPassword')"
+                               required>
+                        <i class="fa-solid fa-eye toggle-password"
+                           id="toggleRPassword"
+                           onclick="togglePasswordField('rPassword', 'toggleRPassword')"></i>
+                    </div>
+
+                    <!-- Indicador de requisitos en vivo -->
+                    <div class="password-requirements" id="reqRPassword">
+                        <div class="titulo">Requisitos de seguridad:</div>
+                        <div class="req-item" data-req="length">
+                            <span class="icon">❌</span> Al menos 8 caracteres
+                        </div>
+                        <div class="req-item" data-req="upper">
+                            <span class="icon">❌</span> Una letra mayúscula
+                        </div>
+                        <div class="req-item" data-req="lower">
+                            <span class="icon">❌</span> Una letra minúscula
+                        </div>
+                        <div class="req-item" data-req="number">
+                            <span class="icon">❌</span> Un número
+                        </div>
+                    </div>
+
+                    <!-- Rol -->
+                    <label for="rRol">
+                        Tipo de cuenta <span class="req">*</span>
+                    </label>
+                    <div class="input-wrapper">
+                        <select id="rRol" required>
+                            <option value="CLIENTE" selected>👤 Cliente — Solicitar servicios</option>
+                            <option value="TECNICO">🔧 Técnico — Ofrecer servicios</option>
+                        </select>
+                    </div>
+
+                    <button type="button" class="btn-primary-full"
+                            onclick="crearCuentaRapida()">
+                        Crear cuenta
+                    </button>
+
+                    <div id="msgRapido3" class="mensaje-registro"></div>
+                </div>
+
+                <div class="login-link">
+                    ¿Ya tienes una cuenta? <a href="/citas.html">Inicia sesión</a>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- =====================================================
+         SCRIPTS
+         ===================================================== -->
+    <script>
+        // Variable global: correo verificado en el registro rápido
+        let correoVerificado = "";
+
+        // =========================================
+        // 1) MOSTRAR / OCULTAR CONTRASEÑA
+        // =========================================
+        function togglePasswordField(inputId, iconId) {
+            const input = document.getElementById(inputId);
+            const icono = document.getElementById(iconId);
+
+            if (input.type === "password") {
+                input.type = "text";
+                icono.classList.remove("fa-eye");
+                icono.classList.add("fa-eye-slash");
+            } else {
+                input.type = "password";
+                icono.classList.remove("fa-eye-slash");
+                icono.classList.add("fa-eye");
+            }
+        }
+
+        // =========================================
+        // 2) CAMBIAR ENTRE PESTAÑAS
+        // =========================================
+        function cambiarTab(tipo) {
+            const tabTradicional = document.getElementById("tabTradicional");
+            const tabRapido      = document.getElementById("tabRapido");
+            const contTradicional = document.getElementById("contenidoTradicional");
+            const contRapido      = document.getElementById("contenidoRapido");
+
+            if (tipo === "tradicional") {
+                tabTradicional.classList.add("active");
+                tabRapido.classList.remove("active");
+                contTradicional.classList.add("active");
+                contRapido.classList.remove("active");
+            } else {
+                tabTradicional.classList.remove("active");
+                tabRapido.classList.add("active");
+                contTradicional.classList.remove("active");
+                contRapido.classList.add("active");
+            }
+        }
+
+        // =========================================
+        // 3) UTILIDADES PARA VALIDAR CONTRASEÑAS EN VIVO
+        // =========================================
+
+        /** Muestra el bloque de requisitos al enfocar el campo. */
+        function mostrarRequisitos(idRequisitos) {
+            document.getElementById(idRequisitos).classList.add("visible");
+        }
+
+        /** Actualiza en vivo los indicadores de cada requisito. */
+        function actualizarRequisitos(inputId, requisitosId) {
+            const valor = document.getElementById(inputId).value;
+            const contenedor = document.getElementById(requisitosId);
+
+            const reglas = {
+                length: valor.length >= 8,
+                upper:  /[A-Z]/.test(valor),
+                lower:  /[a-z]/.test(valor),
+                number: /[0-9]/.test(valor)
+            };
+
+            contenedor.querySelectorAll(".req-item").forEach(item => {
+                const req = item.dataset.req;
+                const icono = item.querySelector(".icon");
+
+                if (reglas[req]) {
+                    item.classList.add("ok");
+                    item.classList.remove("fail");
+                    icono.textContent = "✅";
+                } else {
+                    item.classList.add("fail");
+                    item.classList.remove("ok");
+                    icono.textContent = "❌";
+                }
+            });
+        }
+
+        /** Devuelve true si la contraseña cumple la política. */
+        function passwordValida(password) {
+            return password.length >= 8
+                && /[A-Z]/.test(password)
+                && /[a-z]/.test(password)
+                && /[0-9]/.test(password);
+        }
+
+        // =========================================
+        // 4) REGISTRO TRADICIONAL
+        // =========================================
+        async function registroTradicional() {
+            const msg = document.getElementById("msgTradicional");
+            msg.className = "mensaje-registro";
+
+            const usuario = {
+                nombre:    document.getElementById("tNombre").value.trim(),
+                cedula:    document.getElementById("tCedula").value.trim(),
+                correo:    document.getElementById("tCorreo").value.trim(),
+                telefono:  document.getElementById("tTelefono").value.trim(),
+                direccion: document.getElementById("tDireccion").value.trim(),
+                password:  document.getElementById("tPassword").value,
+                rol:       document.getElementById("tRol").value
+            };
+
+            if (!usuario.nombre || !usuario.cedula || !usuario.correo || !usuario.password) {
+                msg.className = "mensaje-registro mensaje-error";
+                msg.textContent = "Completa todos los campos obligatorios.";
+                return;
+            }
+
+            if (!passwordValida(usuario.password)) {
+                msg.className = "mensaje-registro mensaje-error";
+                msg.textContent = "La contraseña no cumple con los requisitos de seguridad.";
+                return;
+            }
+
+            msg.className = "mensaje-registro mensaje-info";
+            msg.textContent = "Creando tu cuenta...";
+
+            try {
+                const resp = await fetch("/api/usuarios", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(usuario)
+                });
+
+                if (!resp.ok) {
+                    msg.className = "mensaje-registro mensaje-error";
+                    msg.textContent = (await resp.text()) || "No se pudo crear la cuenta.";
+                    return;
+                }
+
+                msg.className = "mensaje-registro mensaje-exito";
+                msg.textContent = "✅ Cuenta creada. Redirigiendo al login...";
+                setTimeout(() => window.location.href = "/citas.html", 1500);
+            } catch (err) {
+                msg.className = "mensaje-registro mensaje-error";
+                msg.textContent = "Error de conexión con el servidor.";
+                console.error(err);
+            }
+        }
+
+        // =========================================
+        // 5) REGISTRO RÁPIDO — PASO 1: SOLICITAR CÓDIGO
+        // =========================================
+        async function solicitarCodigoRegistro() {
+            const correo = document.getElementById("rCorreo").value.trim();
+            const msg = document.getElementById("msgRapido1");
+            msg.className = "mensaje-registro";
+
+            if (!correo) {
+                msg.className = "mensaje-registro mensaje-error";
+                msg.textContent = "Ingresa un correo válido.";
+                return;
+            }
+
+            msg.className = "mensaje-registro mensaje-info";
+            msg.textContent = "Enviando código al correo...";
+
+            try {
+                const resp = await fetch("/api/auth/registro/solicitar-codigo", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ correo })
+                });
+
+                if (!resp.ok) {
+                    msg.className = "mensaje-registro mensaje-error";
+                    msg.textContent = (await resp.text()) || "No se pudo enviar el código.";
+                    return;
+                }
+
+                correoVerificado = correo;
+                document.getElementById("rCorreoMostrado").textContent = correo;
+
+                document.getElementById("rapidoPaso1").style.display = "none";
+                document.getElementById("rapidoPaso2").style.display = "block";
+                document.getElementById("dotR1").classList.remove("active");
+                document.getElementById("dotR2").classList.add("active");
+
+            } catch (err) {
+                msg.className = "mensaje-registro mensaje-error";
+                msg.textContent = "Error de conexión.";
+                console.error(err);
+            }
+        }
+
+        function volverRapidoPaso1() {
+            document.getElementById("rapidoPaso2").style.display = "none";
+            document.getElementById("rapidoPaso1").style.display = "block";
+            document.getElementById("dotR2").classList.remove("active");
+            document.getElementById("dotR1").classList.add("active");
+        }
+
+        // =========================================
+        // 6) REGISTRO RÁPIDO — PASO 2: VERIFICAR CÓDIGO
+        // =========================================
+        async function verificarCodigoRegistro() {
+            const codigo = document.getElementById("rCodigo").value.trim();
+            const msg = document.getElementById("msgRapido2");
+            msg.className = "mensaje-registro";
+
+            if (!codigo || codigo.length !== 6) {
+                msg.className = "mensaje-registro mensaje-error";
+                msg.textContent = "El código debe tener 6 dígitos.";
+                return;
+            }
+
+            msg.className = "mensaje-registro mensaje-info";
+            msg.textContent = "Verificando código...";
+
+            try {
+                const resp = await fetch("/api/auth/registro/verificar-codigo", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ correo: correoVerificado, codigo: codigo })
+                });
+
+                if (!resp.ok) {
+                    msg.className = "mensaje-registro mensaje-error";
+                    msg.textContent = (await resp.text()) || "Código incorrecto o expirado.";
+                    return;
+                }
+
+                document.getElementById("rapidoPaso2").style.display = "none";
+                document.getElementById("rapidoPaso3").style.display = "block";
+                document.getElementById("dotR2").classList.remove("active");
+                document.getElementById("dotR3").classList.add("active");
+
+                document.getElementById("rCorreoFinal").value = correoVerificado;
+
+            } catch (err) {
+                msg.className = "mensaje-registro mensaje-error";
+                msg.textContent = "Error de conexión.";
+                console.error(err);
+            }
+        }
+
+        // =========================================
+        // 7) REGISTRO RÁPIDO — PASO 3: CREAR CUENTA
+        // =========================================
+        async function crearCuentaRapida() {
+            const msg = document.getElementById("msgRapido3");
+            msg.className = "mensaje-registro";
+
+            const usuario = {
+                nombre:    document.getElementById("rNombre").value.trim(),
+                cedula:    document.getElementById("rCedula").value.trim(),
+                correo:    correoVerificado,
+                telefono:  document.getElementById("rTelefono").value.trim(),
+                direccion: document.getElementById("rDireccion").value.trim(),
+                password:  document.getElementById("rPassword").value,
+                rol:       document.getElementById("rRol").value
+            };
+
+            if (!usuario.nombre || !usuario.cedula || !usuario.password) {
+                msg.className = "mensaje-registro mensaje-error";
+                msg.textContent = "Completa los campos obligatorios.";
+                return;
+            }
+
+            if (!passwordValida(usuario.password)) {
+                msg.className = "mensaje-registro mensaje-error";
+                msg.textContent = "La contraseña no cumple con los requisitos de seguridad.";
+                return;
+            }
+
+            msg.className = "mensaje-registro mensaje-info";
+            msg.textContent = "Creando tu cuenta...";
+
+            try {
+                const resp = await fetch("/api/usuarios", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(usuario)
+                });
+
+                if (!resp.ok) {
+                    msg.className = "mensaje-registro mensaje-error";
+                    msg.textContent = (await resp.text()) || "No se pudo crear la cuenta.";
+                    return;
+                }
+
+                msg.className = "mensaje-registro mensaje-exito";
+                msg.textContent = "✅ Cuenta creada. Redirigiendo al login...";
+                setTimeout(() => window.location.href = "/citas.html", 1500);
+            } catch (err) {
+                msg.className = "mensaje-registro mensaje-error";
+                msg.textContent = "Error de conexión.";
+                console.error(err);
+            }
+        }
+    </script>
+
+</body>
+</html>

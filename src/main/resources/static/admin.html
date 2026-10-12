@@ -1,0 +1,988 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel Administrador | Motato Electronics</title>
+
+    <!-- Estilos globales del proyecto -->
+    <link rel="stylesheet" href="/css/style.css">
+
+    <style>
+        /* =====================================================
+           ESTILOS DEL PANEL ADMINISTRADOR
+           ===================================================== */
+
+        /* Cabecera del panel */
+        .panel-header {
+            background: #111827;
+            color: #fff;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .panel-header h1 {
+            margin: 0;
+            font-size: 1.1rem;
+        }
+        .panel-header .user {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-size: .9rem;
+        }
+        .panel-header button {
+            background: #dc2626;
+            border: none;
+            color: #fff;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: .85rem;
+        }
+        .panel-header button:hover { background: #991b1b; }
+
+        /* Contenedor principal */
+        .panel-main {
+            padding: 30px;
+            max-width: 1200px;
+            margin: auto;
+        }
+
+        /* Bienvenida */
+        .panel-bienvenida {
+            background: #fff;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 3px 12px rgba(0,0,0,.06);
+            margin-bottom: 25px;
+        }
+        .panel-bienvenida h2 {
+            color: #111827;
+            margin-bottom: 10px;
+        }
+
+        /* =====================================================
+           PESTAÑAS
+           ===================================================== */
+        .tabs-admin {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 25px;
+            border-bottom: 2px solid #e5e7eb;
+        }
+        .tabs-admin button {
+            padding: 12px 22px;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            font-size: .95rem;
+            font-weight: 600;
+            color: #6b7280;
+            border-bottom: 3px solid transparent;
+            margin-bottom: -2px;
+            transition: all .2s;
+            font-family: inherit;
+        }
+        .tabs-admin button:hover {
+            color: #111827;
+        }
+        .tabs-admin button.active {
+            color: #111827;
+            border-bottom-color: #111827;
+        }
+
+        /* Contenido de cada pestaña */
+        .tab-content-admin {
+            display: none;
+        }
+        .tab-content-admin.active {
+            display: block;
+        }
+
+        /* =====================================================
+           TARJETAS DE INFORMES
+           ===================================================== */
+        .info-card {
+            background: #fff;
+            border-radius: 12px;
+            padding: 22px;
+            margin-bottom: 18px;
+            box-shadow: 0 3px 12px rgba(0,0,0,.06);
+            border-left: 4px solid #111827;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        .info-card .texto {
+            flex: 1;
+            min-width: 240px;
+        }
+        .info-card h3 {
+            margin: 0 0 6px 0;
+            color: #111827;
+            font-size: 1.05rem;
+        }
+        .info-card p {
+            margin: 0;
+            color: #6b7280;
+            font-size: .88rem;
+        }
+        .info-card .botones {
+            display: flex;
+            gap: 10px;
+        }
+
+        /* Botones de descarga */
+        .btn-excel,
+        .btn-pdf {
+            border: none;
+            padding: 10px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: .85rem;
+            font-weight: 600;
+            color: #fff;
+            transition: .2s;
+            font-family: inherit;
+        }
+        .btn-excel { background: #16a34a; }
+        .btn-excel:hover { background: #15803d; }
+        .btn-pdf { background: #dc2626; }
+        .btn-pdf:hover { background: #991b1b; }
+
+        /* Selector de fechas y filtros */
+        .rango-fechas {
+            background: #f9fafb;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            border: 1px solid #e5e7eb;
+            display: grid;
+            grid-template-columns: 1fr 1fr auto;
+            gap: 15px;
+            align-items: flex-end;
+        }
+        .rango-fechas.filtros-citas {
+            grid-template-columns: repeat(5, 1fr);
+        }
+        .rango-fechas label {
+            display: block;
+            font-size: .85rem;
+            font-weight: 600;
+            color: #111827;
+            margin-bottom: 6px;
+        }
+        .rango-fechas input[type="date"],
+        .rango-fechas select {
+            width: 100%;
+            padding: 10px;
+            border: 1.5px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: .95rem;
+            box-sizing: border-box;
+            font-family: inherit;
+            background: #fff;
+        }
+        .rango-fechas input[type="date"]:focus,
+        .rango-fechas select:focus {
+            outline: none;
+            border-color: #111827;
+        }
+        .rango-fechas button {
+            background: #111827;
+            color: #fff;
+            border: none;
+            padding: 11px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-family: inherit;
+            font-size: .9rem;
+        }
+        .rango-fechas button:hover { background: #1f2937; }
+
+        /* =====================================================
+           TABLA DE USUARIOS Y CITAS
+           ===================================================== */
+        .tabla-panel {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            background: #fff;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 3px 12px rgba(0,0,0,.06);
+        }
+        .tabla-panel th,
+        .tabla-panel td {
+            padding: 10px;
+            text-align: left;
+            font-size: .88rem;
+            border-bottom: 1px solid #eee;
+        }
+        .tabla-panel th {
+            background: #f3f4f6;
+            color: #111827;
+            font-weight: 600;
+        }
+
+        /* Grid de tarjetas (resumen) */
+        .panel-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 18px;
+            margin-bottom: 25px;
+        }
+        .panel-card {
+            background: #fff;
+            padding: 22px;
+            border-radius: 12px;
+            box-shadow: 0 3px 12px rgba(0,0,0,.06);
+            border-left: 4px solid #111827;
+        }
+        .panel-card h3 {
+            color: #111827;
+            margin-bottom: 8px;
+            font-size: 1rem;
+        }
+        .panel-card p {
+            color: #666;
+            font-size: .95rem;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        /* Etiquetas de estado */
+        .tag {
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: .75rem;
+            color: #fff;
+            display: inline-block;
+            font-weight: 600;
+        }
+        .tag-ACTIVO                     { background: #16a34a; }
+        .tag-PENDIENTE                  { background: #f59e0b; }
+        .tag-INACTIVO                   { background: #6b7280; }
+        .tag-ASIGNADA                   { background: #3b82f6; }
+        .tag-REPROGRAMACION_PENDIENTE   { background: #8b5cf6; }
+        .tag-EN_PROCESO                 { background: #f97316; }
+        .tag-COMPLETADA                 { background: #16a34a; }
+        .tag-CANCELADA                  { background: #6b7280; }
+
+        /* Botones pequeños */
+        .btn-sm {
+            padding: 5px 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: .75rem;
+            margin-right: 5px;
+            color: #fff;
+            font-weight: 600;
+        }
+        .btn-ok { background: #16a34a; }
+        .btn-ok:hover { background: #15803d; }
+        .btn-no { background: #dc2626; }
+        .btn-no:hover { background: #991b1b; }
+
+        /* =====================================================
+           MODAL DE REASIGNACIÓN
+           ===================================================== */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(15, 23, 42, 0.6);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(4px);
+        }
+        .modal-overlay.active { display: flex; }
+
+        .modal-content {
+            background: #fff;
+            padding: 30px;
+            border-radius: 16px;
+            width: 90%;
+            max-width: 480px;
+            box-shadow: 0 20px 60px rgba(0,0,0,.25);
+        }
+        .modal-content h2 {
+            color: #1E3A8A;
+            margin: 0 0 8px 0;
+            font-size: 1.2rem;
+        }
+        .modal-content p.sub {
+            color: #6b7280;
+            font-size: .9rem;
+            margin-bottom: 20px;
+        }
+        .modal-content label {
+            display: block;
+            font-size: .85rem;
+            font-weight: 600;
+            color: #111827;
+            margin-bottom: 6px;
+            margin-top: 15px;
+        }
+        .modal-content select {
+            width: 100%;
+            padding: 12px;
+            border: 1.5px solid #e5e7eb;
+            border-radius: 10px;
+            font-size: .95rem;
+            font-family: inherit;
+            box-sizing: border-box;
+            background: #fff;
+        }
+        .modal-content select:focus {
+            outline: none;
+            border-color: #1E3A8A;
+        }
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 25px;
+        }
+        .modal-actions button {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: .95rem;
+            font-weight: 600;
+            font-family: inherit;
+        }
+        .btn-cerrar { background: #f3f4f6; color: #374151; }
+        .btn-cerrar:hover { background: #e5e7eb; }
+        .btn-confirmar { background: #1E3A8A; color: #fff; }
+        .btn-confirmar:hover { background: #1e40af; }
+    </style>
+</head>
+<body>
+
+    <!-- =====================================================
+         CABECERA
+         ===================================================== -->
+    <header class="panel-header">
+        <h1>Motato Electronics — Panel Administrador</h1>
+        <div class="user">
+            <span id="nombreUsuario"></span>
+            <button onclick="cerrarSesion()">Cerrar sesión</button>
+        </div>
+    </header>
+
+    <!-- =====================================================
+         CONTENIDO PRINCIPAL
+         ===================================================== -->
+    <main class="panel-main">
+
+        <div class="panel-bienvenida">
+            <h2>Panel de control, <span id="nombre"></span> ⚙️</h2>
+            <p>Gestiona usuarios, citas y genera informes.</p>
+        </div>
+
+        <!-- =====================================================
+             PESTAÑAS
+             ===================================================== -->
+        <div class="tabs-admin">
+            <button class="active" id="tabUsuarios" onclick="cambiarTabAdmin('usuarios')">
+                👥 Usuarios
+            </button>
+            <button id="tabCitas" onclick="cambiarTabAdmin('citas')">
+                📅 Citas
+            </button>
+            <button id="tabInformes" onclick="cambiarTabAdmin('informes')">
+                📊 Informes
+            </button>
+        </div>
+
+        <!-- =====================================================
+             PESTAÑA: USUARIOS
+             ===================================================== -->
+        <div class="tab-content-admin active" id="contenidoUsuarios">
+
+            <div class="panel-grid">
+                <div class="panel-card">
+                    <h3>Usuarios totales</h3>
+                    <p id="totalUsuarios">—</p>
+                </div>
+                <div class="panel-card">
+                    <h3>Técnicos pendientes</h3>
+                    <p id="totalPendientes">—</p>
+                </div>
+                <div class="panel-card">
+                    <h3>Clientes activos</h3>
+                    <p id="totalClientes">—</p>
+                </div>
+            </div>
+
+            <h2 style="color:#111827;">Listado de usuarios</h2>
+            <table class="tabla-panel" id="tablaUsuarios">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nombre</th>
+                        <th>Correo</th>
+                        <th>Rol</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+
+        <!-- =====================================================
+             PESTAÑA: CITAS
+             ===================================================== -->
+        <div class="tab-content-admin" id="contenidoCitas">
+
+            <h2 style="color:#111827;">📅 Gestión de citas</h2>
+            <p style="color:#6b7280; margin-bottom:20px;">
+                Consulta, filtra y reasigna las citas a otros técnicos.
+            </p>
+
+            <!-- Filtros -->
+            <div class="rango-fechas filtros-citas">
+                <div>
+                    <label for="filtroEstado">Estado</label>
+                    <select id="filtroEstado">
+                        <option value="">Todos</option>
+                        <option value="PENDIENTE">Pendiente</option>
+                        <option value="ASIGNADA">Asignada</option>
+                        <option value="REPROGRAMACION_PENDIENTE">Reprogramación</option>
+                        <option value="EN_PROCESO">En proceso</option>
+                        <option value="COMPLETADA">Completada</option>
+                        <option value="CANCELADA">Cancelada</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="filtroTecnico">Técnico</label>
+                    <select id="filtroTecnico">
+                        <option value="">Todos</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="filtroDesde">Desde</label>
+                    <input type="date" id="filtroDesde">
+                </div>
+                <div>
+                    <label for="filtroHasta">Hasta</label>
+                    <input type="date" id="filtroHasta">
+                </div>
+                <div>
+                    <button onclick="aplicarFiltrosCitas()">🔍 Filtrar</button>
+                </div>
+            </div>
+
+            <!-- Tabla de citas -->
+            <table class="tabla-panel" id="tablaCitas">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Fecha</th>
+                        <th>Hora</th>
+                        <th>Cliente</th>
+                        <th>Técnico</th>
+                        <th>Estado</th>
+                        <th>Total</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+
+        <!-- =====================================================
+             PESTAÑA: INFORMES
+             ===================================================== -->
+        <div class="tab-content-admin" id="contenidoInformes">
+
+            <h2 style="color:#111827;">📊 Generar informes</h2>
+            <p style="color:#6b7280; margin-bottom:20px;">
+                Selecciona el rango de fechas y descarga el informe en Excel o PDF.
+            </p>
+
+            <!-- Rango de fechas -->
+            <div class="rango-fechas">
+                <div>
+                    <label for="fechaDesde">Fecha desde</label>
+                    <input type="date" id="fechaDesde">
+                </div>
+                <div>
+                    <label for="fechaHasta">Fecha hasta</label>
+                    <input type="date" id="fechaHasta">
+                </div>
+                <div>
+                    <button onclick="aplicarFechasRapidas()">Últimos 30 días</button>
+                </div>
+            </div>
+
+            <!-- 1. Informe de citas -->
+            <div class="info-card">
+                <div class="texto">
+                    <h3>📋 Informe de Citas</h3>
+                    <p>Incluye cliente, técnico, diagnóstico, informe y montos de cada cita.</p>
+                </div>
+                <div class="botones">
+                    <button class="btn-excel" onclick="descargarInforme('citas', 'excel')">📊 Excel</button>
+                    <button class="btn-pdf" onclick="descargarInforme('citas', 'pdf')">📄 PDF</button>
+                </div>
+            </div>
+
+            <!-- 2. Informe financiero -->
+            <div class="info-card">
+                <div class="texto">
+                    <h3>💰 Informe Financiero</h3>
+                    <p>Ingresos totales, por mano de obra, por repuestos y por método de pago.</p>
+                </div>
+                <div class="botones">
+                    <button class="btn-excel" onclick="descargarInforme('financiero', 'excel')">📊 Excel</button>
+                    <button class="btn-pdf" onclick="descargarInforme('financiero', 'pdf')">📄 PDF</button>
+                </div>
+            </div>
+
+            <!-- 3. Cumplimiento de técnicos -->
+            <div class="info-card">
+                <div class="texto">
+                    <h3>👷 Cumplimiento de Técnicos</h3>
+                    <p>Citas asignadas, completadas, ingresos y tasa de cumplimiento por técnico.</p>
+                </div>
+                <div class="botones">
+                    <button class="btn-excel" onclick="descargarInforme('tecnicos', 'excel')">📊 Excel</button>
+                    <button class="btn-pdf" onclick="descargarInforme('tecnicos', 'pdf')">📄 PDF</button>
+                </div>
+            </div>
+
+            <!-- 4. Listado de usuarios -->
+            <div class="info-card">
+                <div class="texto">
+                    <h3>👥 Listado de Usuarios</h3>
+                    <p>Registro completo de todos los usuarios del sistema.</p>
+                </div>
+                <div class="botones">
+                    <button class="btn-excel" onclick="descargarInforme('usuarios', 'excel')">📊 Excel</button>
+                    <button class="btn-pdf" onclick="descargarInforme('usuarios', 'pdf')">📄 PDF</button>
+                </div>
+            </div>
+
+            <div id="mensajeInforme"
+                 style="margin-top:15px; font-size:.9rem; text-align:center;"></div>
+        </div>
+
+    </main>
+
+    <!-- =====================================================
+         MODAL: REASIGNAR CITA A OTRO TÉCNICO
+         ===================================================== -->
+    <div class="modal-overlay" id="modalReasignar">
+        <div class="modal-content">
+            <h2>🔄 Reasignar cita</h2>
+            <p class="sub">Cita #<b><span id="citaReasignarId"></span></b> — 
+                Cliente: <b><span id="clienteReasignar"></span></b></p>
+
+            <label for="nuevoTecnico">Nuevo técnico</label>
+            <select id="nuevoTecnico"></select>
+
+            <div id="mensajeReasignar"
+                 style="margin-top:12px; font-size:.85rem; text-align:center;"></div>
+
+            <div class="modal-actions">
+                <button type="button" class="btn-cerrar" onclick="cerrarModalReasignar()">Cancelar</button>
+                <button type="button" class="btn-confirmar" onclick="confirmarReasignar()">
+                    Confirmar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- =====================================================
+         SCRIPTS
+         ===================================================== -->
+    <script src="/js/api.js"></script>
+    <script src="/js/panel-guard.js"></script>
+
+    <script>
+        // -----------------------------------------
+        // Verificar sesión y rol ADMINISTRADOR
+        // -----------------------------------------
+        const usuario = protegerPanel("ADMINISTRADOR");
+        let tecnicosActivos = [];  // para el modal de reasignar
+        let citaAReasignarId = null;
+
+        if (usuario) {
+            document.getElementById("nombre").textContent = usuario.nombre;
+            document.getElementById("nombreUsuario").textContent = usuario.nombre;
+            cargarUsuarios();
+            inicializarFechas();
+        }
+
+        // =========================================
+        // PESTAÑAS
+        // =========================================
+        function cambiarTabAdmin(tab) {
+
+            // Configuración de pestañas
+            const tabs = {
+                usuarios: {
+                    btn: document.getElementById("tabUsuarios"),
+                    cont: document.getElementById("contenidoUsuarios")
+                },
+                citas: {
+                    btn: document.getElementById("tabCitas"),
+                    cont: document.getElementById("contenidoCitas")
+                },
+                informes: {
+                    btn: document.getElementById("tabInformes"),
+                    cont: document.getElementById("contenidoInformes")
+                }
+            };
+
+            // Quitar "active" de todos
+            Object.values(tabs).forEach(t => {
+                t.btn.classList.remove("active");
+                t.cont.classList.remove("active");
+            });
+
+            // Activar el seleccionado
+            if (tabs[tab]) {
+                tabs[tab].btn.classList.add("active");
+                tabs[tab].cont.classList.add("active");
+            }
+
+            // Cargar datos al cambiar de pestaña
+            if (tab === "citas") {
+                cargarTecnicosFiltro();
+                cargarCitas();
+            }
+        }
+
+        // =========================================
+        // USUARIOS
+        // =========================================
+        async function cargarUsuarios() {
+            try {
+                const resp = await fetchConToken("/api/usuarios");
+                const usuarios = await resp.json();
+
+                const tbody = document.querySelector("#tablaUsuarios tbody");
+                tbody.innerHTML = "";
+
+                let pendientes = 0, clientes = 0;
+
+                usuarios.forEach(u => {
+                    if (u.estado === "PENDIENTE") pendientes++;
+                    if (u.rol === "CLIENTE" && u.estado === "ACTIVO") clientes++;
+
+                    const tr = document.createElement("tr");
+                    tr.innerHTML = `
+                        <td>${u.id}</td>
+                        <td>${u.nombre}</td>
+                        <td>${u.correo}</td>
+                        <td>${u.rol}</td>
+                        <td><span class="tag tag-${u.estado}">${u.estado}</span></td>
+                        <td>
+                            ${u.estado === "PENDIENTE" ?
+                                `<button class="btn-sm btn-ok" onclick="cambiarEstado(${u.id},'ACTIVO')">Aprobar</button>` : ""}
+                            ${u.estado === "ACTIVO" ?
+                                `<button class="btn-sm btn-no" onclick="cambiarEstado(${u.id},'INACTIVO')">Inactivar</button>` : ""}
+                            ${u.estado === "INACTIVO" ?
+                                `<button class="btn-sm btn-ok" onclick="cambiarEstado(${u.id},'ACTIVO')">Activar</button>` : ""}
+                            <button class="btn-sm btn-no" onclick="eliminarUsuario(${u.id})">Eliminar</button>
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+
+                document.getElementById("totalUsuarios").textContent = usuarios.length;
+                document.getElementById("totalPendientes").textContent = pendientes;
+                document.getElementById("totalClientes").textContent = clientes;
+
+            } catch (err) {
+                console.error("Error al cargar usuarios:", err);
+            }
+        }
+
+        async function cambiarEstado(id, estado) {
+            const resp = await fetchConToken(`/api/admin/usuarios/${id}/estado?estado=${estado}`, {
+                method: "PUT"
+            });
+            if (resp.ok) cargarUsuarios();
+        }
+
+        async function eliminarUsuario(id) {
+            if (!confirm("¿Eliminar este usuario?")) return;
+
+            try {
+                const resp = await fetchConToken(`/api/usuarios/${id}`, { method: "DELETE" });
+
+                if (!resp.ok) {
+                    alert("⚠️ No se pudo eliminar:\n\n" + (await resp.text()));
+                    return;
+                }
+                cargarUsuarios();
+
+            } catch (err) {
+                alert("Error de conexión al eliminar.");
+                console.error(err);
+            }
+        }
+
+        // =========================================
+        // CITAS
+        // =========================================
+
+        // Carga los técnicos en el filtro y guarda los activos para el modal
+        async function cargarTecnicosFiltro() {
+            try {
+                const resp = await fetchConToken("/api/usuarios");
+                const usuarios = await resp.json();
+
+                // Guardar técnicos activos (para el modal de reasignar)
+                tecnicosActivos = usuarios.filter(u => u.rol === "TECNICO" && u.estado === "ACTIVO");
+
+                // Cargar el filtro de técnicos
+                const select = document.getElementById("filtroTecnico");
+                select.innerHTML = '<option value="">Todos</option>';
+
+                usuarios.filter(u => u.rol === "TECNICO").forEach(t => {
+                    const opt = document.createElement("option");
+                    opt.value = t.id;
+                    opt.textContent = t.nombre;
+                    select.appendChild(opt);
+                });
+            } catch (err) {
+                console.error("Error al cargar técnicos:", err);
+            }
+        }
+
+        // Carga las citas con los filtros actuales
+        async function cargarCitas() {
+            try {
+                const estado = document.getElementById("filtroEstado").value;
+                const tecnicoId = document.getElementById("filtroTecnico").value;
+                const desde = document.getElementById("filtroDesde").value;
+                const hasta = document.getElementById("filtroHasta").value;
+
+                let url = "/api/admin/citas?";
+                if (estado) url += `estado=${estado}&`;
+                if (tecnicoId) url += `tecnicoId=${tecnicoId}&`;
+                if (desde) url += `desde=${desde}&`;
+                if (hasta) url += `hasta=${hasta}&`;
+
+                const resp = await fetchConToken(url);
+                const citas = await resp.json();
+
+                const tbody = document.querySelector("#tablaCitas tbody");
+                tbody.innerHTML = "";
+
+                if (citas.length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;color:#999;padding:20px;">
+                        No hay citas con esos filtros.</td></tr>`;
+                    return;
+                }
+
+                citas.forEach(c => {
+                    const tr = document.createElement("tr");
+                    tr.innerHTML = `
+                        <td>${c.id}</td>
+                        <td>${formatearFecha(c.fecha)}</td>
+                        <td>${c.hora || "—"}</td>
+                        <td>${c.clienteNombre || "Cliente #" + c.clienteId}</td>
+                        <td>${c.tecnicoNombre || "—"}</td>
+                        <td><span class="tag tag-${c.estado}">${c.estado}</span></td>
+                        <td>$${(c.total || 0).toLocaleString("es-CO")}</td>
+                        <td>
+                            ${["PENDIENTE","ASIGNADA","REPROGRAMACION_PENDIENTE"].includes(c.estado) ?
+                                `<button class="btn-sm btn-ok"
+                                    onclick="abrirModalReasignar(${c.id}, '${(c.clienteNombre||"").replace(/'/g,"")}')"
+                                    title="Reasignar a otro técnico">🔄 Reasignar</button>` : "—"}
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+
+            } catch (err) {
+                console.error("Error al cargar citas:", err);
+            }
+        }
+
+        function aplicarFiltrosCitas() {
+            cargarCitas();
+        }
+
+        // =========================================
+        // MODAL REASIGNAR
+        // =========================================
+        function abrirModalReasignar(citaId, clienteNombre) {
+
+            if (tecnicosActivos.length === 0) {
+                alert("No hay técnicos activos disponibles.");
+                return;
+            }
+
+            // Guardar el id de la cita a reasignar
+            citaAReasignarId = citaId;
+
+            // Mostrar datos
+            document.getElementById("citaReasignarId").textContent = citaId;
+            document.getElementById("clienteReasignar").textContent = clienteNombre || "—";
+
+            // Cargar técnicos en el select
+            const select = document.getElementById("nuevoTecnico");
+            select.innerHTML = "";
+
+            tecnicosActivos.forEach(t => {
+                const opt = document.createElement("option");
+                opt.value = t.id;
+                opt.textContent = `${t.nombre} (${t.correo})`;
+                select.appendChild(opt);
+            });
+
+            // Limpiar mensaje y abrir el modal
+            document.getElementById("mensajeReasignar").textContent = "";
+            document.getElementById("modalReasignar").classList.add("active");
+        }
+
+        function cerrarModalReasignar() {
+            document.getElementById("modalReasignar").classList.remove("active");
+            citaAReasignarId = null;
+        }
+
+        async function confirmarReasignar() {
+            const nuevoTecnicoId = document.getElementById("nuevoTecnico").value;
+            const msg = document.getElementById("mensajeReasignar");
+
+            if (!nuevoTecnicoId) {
+                msg.style.color = "#C0392B";
+                msg.textContent = "Selecciona un técnico.";
+                return;
+            }
+
+            msg.style.color = "#666";
+            msg.textContent = "Reasignando...";
+
+            try {
+                const resp = await fetchConToken(
+                    `/api/admin/citas/${citaAReasignarId}/reasignar/${nuevoTecnicoId}`,
+                    { method: "PUT" }
+                );
+
+                if (!resp.ok) {
+                    msg.style.color = "#C0392B";
+                    msg.textContent = (await resp.text()) || "No se pudo reasignar.";
+                    return;
+                }
+
+                msg.style.color = "#16a34a";
+                msg.textContent = "✅ Cita reasignada correctamente.";
+
+                setTimeout(() => {
+                    cerrarModalReasignar();
+                    cargarCitas();
+                }, 1000);
+
+            } catch (err) {
+                msg.style.color = "#C0392B";
+                msg.textContent = "Error de conexión.";
+                console.error(err);
+            }
+        }
+
+        // =========================================
+        // INFORMES
+        // =========================================
+
+        function inicializarFechas() {
+            aplicarFechasRapidas();
+        }
+
+        // Pone las fechas por defecto: últimos 30 días
+        function aplicarFechasRapidas() {
+            const hoy = new Date();
+            const hace30 = new Date();
+            hace30.setDate(hoy.getDate() - 30);
+
+            document.getElementById("fechaHasta").value = hoy.toISOString().split("T")[0];
+            document.getElementById("fechaDesde").value = hace30.toISOString().split("T")[0];
+        }
+
+        async function descargarInforme(tipo, formato) {
+
+            const msg = document.getElementById("mensajeInforme");
+            msg.style.color = "#666";
+            msg.textContent = "Generando informe...";
+
+            // Armar URL
+            let url = `/api/admin/reportes/${tipo}/${formato}`;
+
+            // Añadir fechas solo si NO es el informe de usuarios
+            if (tipo !== "usuarios") {
+                const desde = document.getElementById("fechaDesde").value;
+                const hasta = document.getElementById("fechaHasta").value;
+
+                if (!desde || !hasta) {
+                    msg.style.color = "#C0392B";
+                    msg.textContent = "Selecciona el rango de fechas.";
+                    return;
+                }
+
+                url += `?desde=${desde}&hasta=${hasta}`;
+            }
+
+            // Nombre del archivo
+            const nombreArchivo = `reporte-${tipo}.${formato === "excel" ? "xlsx" : "pdf"}`;
+
+            try {
+                const resp = await fetchConToken(url);
+
+                if (!resp.ok) {
+                    msg.style.color = "#C0392B";
+                    msg.textContent = "Error al generar el informe. Código: " + resp.status;
+                    return;
+                }
+
+                // Convertir a blob y descargar
+                const blob = await resp.blob();
+                const blobUrl = URL.createObjectURL(blob);
+
+                const a = document.createElement("a");
+                a.href = blobUrl;
+                a.download = nombreArchivo;
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+                URL.revokeObjectURL(blobUrl);
+
+                msg.style.color = "#16a34a";
+                msg.textContent = "✅ Informe descargado: " + nombreArchivo;
+                setTimeout(() => { msg.textContent = ""; }, 3000);
+
+            } catch (err) {
+                msg.style.color = "#C0392B";
+                msg.textContent = "Error al descargar el informe.";
+                console.error(err);
+            }
+        }
+
+        // =========================================
+        // UTILIDADES
+        // =========================================
+        function formatearFecha(fecha) {
+            if (!fecha) return "—";
+            const [y, m, d] = fecha.split("-");
+            return `${d}/${m}/${y}`;
+        }
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,1389 @@
+/*=========================================================
+    MOTATO ELECTRONICS — HOJA DE ESTILOS ÚNICA
+    -----------------------------------------------------
+    Este archivo reemplaza a: Style.css, citas.css, registro.css.
+    Organizado por secciones para facilitar su mantenimiento.
+==========================================================*/
+
+/*=========================================================
+    1) VARIABLES GLOBALES
+    -----------------------------------------------------
+    Definimos colores, bordes, sombras y radios en un solo
+    lugar. Si mañana queremos cambiar el color principal,
+    solo modificamos esta sección.
+==========================================================*/
+:root{
+    --primary:      #0056b3;      /* Azul principal */
+    --secondary:    #00c2ff;      /* Celeste acento */
+    --dark:         #1E3A8A;      /* Azul oscuro institucional */
+    --light:        #f4f7f6;      /* Fondo claro */
+    --accent:       #ffcc00;      /* Amarillo para destacar */
+    --success:      #27AE60;      /* Verde (éxito / activo) */
+    --danger:       #C0392B;      /* Rojo (error / inactivo) */
+    --warning:      #F39C12;      /* Naranja (advertencia / pendiente) */
+    --text:         #333;         /* Texto principal */
+    --muted:        #666;         /* Texto secundario */
+    --border:       #D6DCE5;      /* Borde neutro */
+    --radius:       12px;         /* Radio de bordes estándar */
+    --radius-lg:    20px;         /* Radio grande (tarjetas) */
+    --shadow-sm:    0 4px 6px rgba(0,0,0,.05);
+    --shadow-md:    0 10px 20px rgba(0,0,0,.10);
+    --shadow-lg:    0 15px 40px rgba(0,0,0,.15);
+}
+
+/*=========================================================
+    2) RESET Y BASE
+==========================================================*/
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;      /* El padding no rompe el ancho */
+}
+
+body{
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #f4f7fb, #e9eff8);
+    color: var(--text);
+    min-height: 100vh;
+    line-height: 1.6;
+}
+
+img{
+    max-width: 100%;
+    height: auto;
+    display: block;              /* Evita espacios fantasma */
+}
+
+a{
+    text-decoration: none;
+    color: inherit;
+}
+
+ul{
+    list-style: none;
+}
+
+/*=========================================================
+    3) HEADER Y NAVEGACIÓN
+    -----------------------------------------------------
+    Este header se reutiliza en index, servicios y citas.
+==========================================================*/
+.main-header{
+    background: #fff;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 5%;
+    box-shadow: 0 2px 10px rgba(0,0,0,.08);
+    position: sticky;            /* Se queda fijo al hacer scroll */
+    top: 0;
+    z-index: 1000;
+}
+
+.logo h1{
+    color: var(--primary);
+    margin: 0;
+    font-size: 1.5rem;
+}
+.logo span{ color: var(--secondary); }
+
+.main-nav ul{
+    display: flex;
+    gap: 30px;
+    align-items: center;
+}
+
+.main-nav a{
+    color: var(--dark);
+    font-weight: 600;
+    font-size: 1rem;
+    transition: color .3s;
+    padding: 6px 0;
+}
+
+/* Resalta el enlace de la página en la que estamos */
+.main-nav a:hover,
+.main-nav a.active{
+    color: var(--primary);
+    border-bottom: 3px solid var(--primary);
+}
+
+/* Botón destacado "Iniciar sesión" en la navbar */
+.main-nav a.btn-login{
+    background: var(--dark);
+    color: #fff;
+    padding: 8px 18px;
+    border-radius: 8px;
+    transition: background .3s;
+    border-bottom: none;
+}
+.main-nav a.btn-login:hover{
+    background: var(--primary);
+    border-bottom: none;
+}
+
+/*=========================================================
+    4) BOTÓN FLOTANTE DE WHATSAPP
+==========================================================*/
+.btn-flotante{
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    background-color: #25d366;
+    color: #fff;
+    padding: 14px 22px;
+    border-radius: 50px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    box-shadow: 0 4px 15px rgba(0,0,0,.3);
+    z-index: 9999;
+    transition: all .3s ease;
+}
+.btn-flotante:hover{
+    background-color: #128c7e;
+    transform: scale(1.05);
+}
+.btn-flotante i{ font-size: 1.5rem; }
+
+/*=========================================================
+    5) HERO DE LA PÁGINA PRINCIPAL
+==========================================================*/
+.hero-image{
+    background: linear-gradient(rgba(0,0,0,.5), rgba(0,0,0,.5));
+    background-size: cover;
+    background-position: center;
+    color: #fff;
+    text-align: center;
+    padding: 80px 20px;
+}
+
+.hero-content h2 {
+    font-size: 1.8rem;
+    margin-bottom: 10px;    /* ↓ menos espacio */
+}
+.hero-content h3 {
+    font-size: 1.1rem;
+    font-weight: 400;
+    margin-bottom: 12px;    /* ↓ menos espacio */
+}
+.hero-content p {
+    max-width: 1000px;
+    margin: 0 auto 8px;     /* ↓ menos espacio */
+    text-align: justify;
+    line-height: 1.5;        /* ↓ interlineado más compacto */
+    font-size: .95rem;       /* ↓ texto un poco más pequeño */
+}
+
+/*=========================================================
+    6) LAYOUT PRINCIPAL (index)
+==========================================================*/
+.container{
+    display: grid;
+    grid-template-columns: 2fr 1fr;    /* Contenido + sidebar */
+    gap: 30px;
+    padding: 2rem 5%;
+    max-width: 1800px;
+    margin: auto;
+}
+
+.info-grid{
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.card{
+    background: #fff;
+    padding: 20px;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-sm);
+}
+.card h3{ color: var(--primary); margin-bottom: 10px; }
+
+.image-card img{
+    width: 100%;
+    border-radius: var(--radius);
+    object-fit: cover;
+}
+
+.services-info-grid{
+    background: var(--primary);
+    color: #fff;
+    padding: 25px;
+    border-radius: var(--radius);
+    margin-bottom: 20px;
+}
+
+.extra-info-grid{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.social-box,
+.payment-box{
+    background: #fff;
+    border-left: 5px solid var(--secondary);
+    padding: 15px;
+    border-radius: 8px;
+}
+.social-box h4,
+.payment-box h4{
+    color: var(--dark);
+    margin-bottom: 10px;
+}
+
+/*=========================================================
+    7) REDES SOCIALES
+==========================================================*/
+.social-buttons{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.btn-social{
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    border-radius: 6px;
+    color: #fff;
+    font-weight: bold;
+    font-size: .85rem;
+    transition: transform .2s, background .3s;
+}
+.btn-social:hover{ transform: scale(1.05); }
+
+.whatsapp{ background-color: #25d366; }
+.facebook{ background-color: #1877f2; }
+.instagram{ background-color: #e4405f; }
+.linkedin{ background-color: #0077b5; }
+
+/*=========================================================
+    8) SIDEBAR
+==========================================================*/
+.aside-card{
+    background: #fff;
+    padding: 20px;
+    border-radius: var(--radius);
+    position: sticky;
+    top: 100px;
+    box-shadow: var(--shadow-sm);
+}
+.aside-card h4{ color: var(--dark); margin-bottom: 10px; }
+.aside-card ul li{ margin-bottom: 8px; }
+.aside-card ul li a{
+    color: var(--primary);
+    font-size: .9rem;
+}
+.aside-card ul li a:hover{ text-decoration: underline; }
+
+.aside-img{
+    width: 100%;
+    border-radius: var(--radius);
+    margin: 15px 0;
+}
+
+/*=========================================================
+    9) FOOTER
+==========================================================*/
+.main-footer,
+footer{
+    background: var(--dark);
+    color: #fff;
+    padding: 40px 5% 20px;
+    margin-top: 40px;
+    text-align: center;
+}
+.footer-grid{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    border-top: 6px solid var(--secondary);
+    padding-top: 25px;
+    max-width: 1200px;
+    margin: auto;
+}
+.footer-info p,
+.footer-legal p{
+    margin-bottom: 8px;
+    font-size: .9rem;
+}
+
+/*=========================================================
+    10) PÁGINA DE SERVICIOS
+==========================================================*/
+.services-hero{
+    text-align: center;
+    padding: 60px 20px;
+    background: linear-gradient(135deg, #e9eff8, #ffffff);
+}
+.services-hero h1{ color: var(--dark); font-size: 2.5rem; }
+.services-hero h2{
+    color: var(--muted);
+    font-weight: 400;
+    font-size: 1.1rem;
+    margin: 15px 0 25px;
+}
+
+.container-services{
+    max-width: 1400px;
+    margin: 40px auto;
+    padding: 0 20px;
+}
+.section-title{
+    text-align: center;
+    color: var(--dark);
+    margin-bottom: 30px;
+    font-size: 1.8rem;
+}
+
+.services-grid{
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 25px;
+}
+
+.service-card{
+    background: #fff;
+    padding: 25px;
+    border-radius: var(--radius-lg);
+    text-align: center;
+    box-shadow: var(--shadow-md);
+    transition: transform .3s;
+    border-bottom: 4px solid var(--secondary);
+}
+.service-card:hover{ transform: translateY(-10px); }
+.service-card h3{ color: var(--dark); margin: 12px 0; }
+.service-card p{
+    color: var(--primary);
+    font-size: .95rem;
+    margin-bottom: 15px;
+}
+
+/*=========================================================
+    11) LOGIN / REGISTRO / CITAS
+==========================================================*/
+.contenedor{
+    max-width: 1200px;
+    margin: 60px auto;
+    display: grid;
+    grid-template-columns: 1fr 500px;
+    gap: 50px;
+    padding: 0 20px;
+}
+
+.presentacion{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+.presentacion h2{
+    font-size: 2.5rem;
+    color: #222;
+    margin-bottom: 20px;
+    line-height: 1.2;
+}
+.presentacion h2 span{ color: var(--dark); }
+.presentacion p{
+    font-size: 1.05rem;
+    color: var(--muted);
+    text-align: justify;
+    line-height: 1.8;
+    margin-bottom: 30px;
+}
+.presentacion img{
+    max-width: 520px;
+    margin: auto;
+}
+
+.panel{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Tarjeta blanca con el formulario */
+.card-form{
+    width: 100%;
+    background: #fff;
+    border-radius: var(--radius-lg);
+    padding: 40px;
+    box-shadow: var(--shadow-lg);
+    transition: transform .4s;
+}
+.card-form:hover{ transform: translateY(-5px); }
+
+.card-form h2{
+    color: var(--dark);
+    text-align: center;
+    margin-bottom: 30px;
+    font-size: 1.7rem;
+}
+.card-form h2 i{ margin-right: 10px; }
+
+/* Campos con ícono */
+.input{
+    display: flex;
+    align-items: center;
+    margin-bottom: 18px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: #fafafa;
+    transition: border .3s;
+}
+.input:focus-within{
+    border: 2px solid var(--primary);
+    box-shadow: 0 0 8px rgba(37,99,235,.2);
+}
+.input i{
+    width: 50px;
+    text-align: center;
+    color: var(--primary);
+    font-size: 1.1rem;
+}
+.input input,
+.input select{
+    width: 100%;
+    border: none;
+    outline: none;
+    padding: 15px;
+    font-size: 1rem;
+    background: transparent;
+    font-family: inherit;
+}
+
+/* Botón principal */
+.btn{
+    width: 100%;
+    padding: 15px;
+    border: none;
+    border-radius: var(--radius);
+    background: var(--dark);
+    color: #fff;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: .3s;
+}
+.btn:hover{
+    background: var(--primary);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(37,99,235,.25);
+}
+
+/* Enlaces dentro de las tarjetas de login/registro */
+.card-form p{
+    text-align: center;
+    margin-top: 20px;
+    color: var(--muted);
+    font-size: .9rem;
+}
+.card-form a{
+    color: var(--primary);
+    font-weight: bold;
+}
+.card-form a:hover{ text-decoration: underline; }
+
+/* Mensajes de alerta (login, registro, etc.) */
+.mensaje-login{
+    margin-top: 20px;
+    padding: 14px 16px;
+    border-radius: var(--radius);
+    color: #fff;
+    font-size: .95rem;
+    display: none;               /* Oculto hasta que haya mensaje */
+}
+.mensaje-error{ background: var(--danger); }
+.mensaje-exito{ background: var(--success); }
+.mensaje-warning{ background: var(--warning); }
+
+/* Clase utilitaria para ocultar */
+.oculto{ display: none; }
+
+/*=========================================================
+    12) REGISTRO
+==========================================================*/
+.registro-container{
+    max-width: 1300px;
+    margin: 50px auto;
+    display: grid;
+    grid-template-columns: 1fr 520px;
+    gap: 50px;
+    align-items: center;
+    padding: 20px;
+}
+
+.registro-info h2{
+    color: var(--dark);
+    font-size: 2.2rem;
+    margin-bottom: 20px;
+}
+.registro-info p{
+    font-size: 1.05rem;
+    color: var(--muted);
+    line-height: 1.8;
+    text-align: justify;
+}
+.registro-info img{
+    max-width: 500px;
+    margin: 40px auto;
+    display: block;
+}
+
+.registro-card{
+    background: #fff;
+    padding: 40px;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+}
+.registro-card h2{
+    text-align: center;
+    color: var(--dark);
+    margin-bottom: 30px;
+}
+
+/* Fila de dos columnas dentro del formulario de registro */
+.fila{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+}
+
+/*=========================================================
+    13) PANELES (cliente / técnico / admin)
+==========================================================*/
+.panel-header{
+    .panel-header {
+    background: #6b7280;    /* ← gris */
+    color: #fff;
+    padding: 15px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+}
+.panel-header h1{
+    font-size: 1.1rem;
+    margin: 0;
+}
+.panel-header .user{
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    font-size: .9rem;
+}
+.panel-header button{
+    background: var(--danger);
+    border: none;
+    color: #fff;
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: .85rem;
+}
+.panel-header button:hover{ background: #991b1b; }
+
+.panel-main{
+    padding: 30px;
+    max-width: 1000px;
+    margin: auto;
+}
+
+.panel-bienvenida{
+    background: #fff;
+    padding: 25px;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-sm);
+}
+.panel-bienvenida h2{ color: var(--dark); margin-bottom: 10px; }
+
+.panel-grid{
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 18px;
+    margin-top: 25px;
+}
+
+.panel-card{
+    background: #fff;
+    padding: 22px;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-sm);
+    border-left: 4px solid var(--dark);
+}
+.panel-card h3{
+    color: var(--dark);
+    margin-bottom: 8px;
+    font-size: 1rem;
+}
+.panel-card p{
+    color: var(--muted);
+    font-size: .88rem;
+}
+
+/* Tabla del panel administrador */
+.tabla-panel{
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+    background: #fff;
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+}
+.tabla-panel th,
+.tabla-panel td{
+    padding: 10px;
+    text-align: left;
+    font-size: .88rem;
+    border-bottom: 1px solid #eee;
+}
+.tabla-panel th{
+    background: #f3f4f6;
+    color: var(--dark);
+}
+
+/* Etiquetas de estado (ACTIVO / PENDIENTE / INACTIVO) */
+.tag{
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-size: .75rem;
+    color: #fff;
+    display: inline-block;
+}
+.tag-ACTIVO{ background: var(--success); }
+.tag-PENDIENTE{ background: var(--warning); }
+.tag-INACTIVO{ background: #6b7280; }
+
+/* Botones pequeños de acción */
+.btn-sm{
+    padding: 5px 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: .75rem;
+    margin-right: 5px;
+    color: #fff;
+}
+.btn-ok{ background: var(--success); }
+.btn-no{ background: var(--danger); }
+
+/*=========================================================
+    14) RESPONSIVE (móvil y tablet)
+==========================================================*/
+@media(max-width: 1000px){
+    .container,
+    .contenedor,
+    .registro-container{
+        grid-template-columns: 1fr;
+        padding: 20px;
+    }
+    .fila{ grid-template-columns: 1fr; }
+    .main-nav ul{
+        gap: 15px;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    .footer-grid{ grid-template-columns: 1fr; }
+    .hero-content h2{ font-size: 1.4rem; }
+}/*=========================================================
+    MOTATO ELECTRONICS — HOJA DE ESTILOS ÚNICA
+    -----------------------------------------------------
+    Este archivo reemplaza a: Style.css, citas.css, registro.css.
+    Organizado por secciones para facilitar su mantenimiento.
+==========================================================*/
+
+/*=========================================================
+    1) VARIABLES GLOBALES
+    -----------------------------------------------------
+    Definimos colores, bordes, sombras y radios en un solo
+    lugar. Si mañana queremos cambiar el color principal,
+    solo modificamos esta sección.
+==========================================================*/
+:root{
+    --primary:      #0056b3;      /* Azul principal */
+    --secondary:    #00c2ff;      /* Celeste acento */
+    --dark:         #1E3A8A;      /* Azul oscuro institucional */
+    --light:        #f4f7f6;      /* Fondo claro */
+    --accent:       #ffcc00;      /* Amarillo para destacar */
+    --success:      #27AE60;      /* Verde (éxito / activo) */
+    --danger:       #C0392B;      /* Rojo (error / inactivo) */
+    --warning:      #F39C12;      /* Naranja (advertencia / pendiente) */
+    --text:         #333;         /* Texto principal */
+    --muted:        #666;         /* Texto secundario */
+    --border:       #D6DCE5;      /* Borde neutro */
+    --radius:       12px;         /* Radio de bordes estándar */
+    --radius-lg:    20px;         /* Radio grande (tarjetas) */
+    --shadow-sm:    0 4px 6px rgba(0,0,0,.05);
+    --shadow-md:    0 10px 20px rgba(0,0,0,.10);
+    --shadow-lg:    0 15px 40px rgba(0,0,0,.15);
+}
+
+/*=========================================================
+    2) RESET Y BASE
+==========================================================*/
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;      /* El padding no rompe el ancho */
+}
+
+body{
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #f4f7fb, #e9eff8);
+    color: var(--text);
+    min-height: 100vh;
+    line-height: 1.6;
+}
+
+img{
+    max-width: 100%;
+    height: auto;
+    display: block;              /* Evita espacios fantasma */
+}
+
+a{
+    text-decoration: none;
+    color: inherit;
+}
+
+ul{
+    list-style: none;
+}
+
+/*=========================================================
+    3) HEADER Y NAVEGACIÓN
+    -----------------------------------------------------
+    Este header se reutiliza en index, servicios y citas.
+==========================================================*/
+.main-header{
+    background: #fff;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 5%;
+    box-shadow: 0 2px 10px rgba(0,0,0,.08);
+    position: sticky;            /* Se queda fijo al hacer scroll */
+    top: 0;
+    z-index: 1000;
+}
+
+.logo h1{
+    color: var(--primary);
+    margin: 0;
+    font-size: 1.5rem;
+}
+.logo span{ color: var(--secondary); }
+
+.main-nav ul{
+    display: flex;
+    gap: 30px;
+    align-items: center;
+}
+
+.main-nav a{
+    color: var(--dark);
+    font-weight: 600;
+    font-size: 1rem;
+    transition: color .3s;
+    padding: 6px 0;
+}
+
+/* Resalta el enlace de la página en la que estamos */
+.main-nav a:hover,
+.main-nav a.active{
+    color: var(--primary);
+    border-bottom: 3px solid var(--primary);
+}
+
+/* Botón destacado "Iniciar sesión" en la navbar */
+.main-nav a.btn-login{
+    background: var(--dark);
+    color: #fff;
+    padding: 8px 18px;
+    border-radius: 8px;
+    transition: background .3s;
+    border-bottom: none;
+}
+.main-nav a.btn-login:hover{
+    background: var(--primary);
+    border-bottom: none;
+}
+
+/*=========================================================
+    4) BOTÓN FLOTANTE DE WHATSAPP
+==========================================================*/
+.btn-flotante{
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    background-color: #25d366;
+    color: #fff;
+    padding: 14px 22px;
+    border-radius: 50px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    box-shadow: 0 4px 15px rgba(0,0,0,.3);
+    z-index: 9999;
+    transition: all .3s ease;
+}
+.btn-flotante:hover{
+    background-color: #128c7e;
+    transform: scale(1.05);
+}
+.btn-flotante i{ font-size: 1.5rem; }
+
+/*=========================================================
+    5) HERO DE LA PÁGINA PRINCIPAL
+==========================================================*/
+.hero-image {
+    background: linear-gradient(rgba(0,0,0,.5), rgba(0,0,0,.5));
+    background-size: cover;
+    background-position: center;
+    color: #fff;
+    text-align: center;
+    padding: 30px 20px;    /* ← reducimos de 80 a 30 */
+}
+.hero-content h2{ font-size: 2rem; margin-bottom: 15px; }
+.hero-content h3{ font-size: 1.2rem; font-weight: 400; margin-bottom: 20px; }
+.hero-content p{
+    max-width: 1000px;
+    margin: 0 auto 12px;
+    text-align: justify;
+}
+
+/*=========================================================
+    6) LAYOUT PRINCIPAL (index)
+==========================================================*/
+.container{
+    display: grid;
+    grid-template-columns: 2fr 1fr;    /* Contenido + sidebar */
+    gap: 30px;
+    padding: 2rem 5%;
+    max-width: 1800px;
+    margin: auto;
+}
+
+.info-grid{
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.card{
+    background: #fff;
+    padding: 20px;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-sm);
+}
+.card h3{ color: var(--primary); margin-bottom: 10px; }
+
+.image-card img{
+    width: 100%;
+    border-radius: var(--radius);
+    object-fit: cover;
+}
+
+.services-info-grid{
+    background: var(--primary);
+    color: #fff;
+    padding: 25px;
+    border-radius: var(--radius);
+    margin-bottom: 20px;
+}
+
+.extra-info-grid{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.social-box,
+.payment-box{
+    background: #fff;
+    border-left: 5px solid var(--secondary);
+    padding: 15px;
+    border-radius: 8px;
+}
+.social-box h4,
+.payment-box h4{
+    color: var(--dark);
+    margin-bottom: 10px;
+}
+
+/*=========================================================
+    7) REDES SOCIALES
+==========================================================*/
+.social-buttons{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.btn-social{
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    border-radius: 6px;
+    color: #fff;
+    font-weight: bold;
+    font-size: .85rem;
+    transition: transform .2s, background .3s;
+}
+.btn-social:hover{ transform: scale(1.05); }
+
+.whatsapp{ background-color: #25d366; }
+.facebook{ background-color: #1877f2; }
+.instagram{ background-color: #e4405f; }
+.linkedin{ background-color: #0077b5; }
+
+/*=========================================================
+    8) SIDEBAR
+==========================================================*/
+.aside-card{
+    background: #fff;
+    padding: 20px;
+    border-radius: var(--radius);
+    position: sticky;
+    top: 100px;
+    box-shadow: var(--shadow-sm);
+}
+.aside-card h4{ color: var(--dark); margin-bottom: 10px; }
+.aside-card ul li{ margin-bottom: 8px; }
+.aside-card ul li a{
+    color: var(--primary);
+    font-size: .9rem;
+}
+.aside-card ul li a:hover{ text-decoration: underline; }
+
+.aside-img{
+    width: 100%;
+    border-radius: var(--radius);
+    margin: 15px 0;
+}
+
+/*=========================================================
+    9) FOOTER
+==========================================================*/
+.main-footer,
+footer{
+    background: var(--dark);
+    color: #fff;
+    padding: 40px 5% 20px;
+    margin-top: 40px;
+    text-align: center;
+}
+.footer-grid {
+    display: grid;
+    grid-template-columns: 1fr;       /* ← una sola columna */
+    gap: 15px;
+    border-top: 6px solid var(--secondary);
+    padding-top: 25px;
+    max-width: 1200px;
+    margin: auto;
+    text-align: center;                /* ← centrado */
+}
+
+.footer-legal {
+    border-top: 1px solid rgba(255, 255, 255, 0.15);
+    padding-top: 15px;
+    margin-top: 10px;
+}
+
+.footer-info p,
+.footer-legal p{
+    margin-bottom: 8px;
+    font-size: .9rem;
+}
+
+/*=========================================================
+    10) PÁGINA DE SERVICIOS
+==========================================================*/
+.services-hero img {
+    width: 80%;              /* ← 80% del ancho */
+    max-width: 1000px;       /* ← no más de 1000px */
+    height: auto;
+    margin: 25px auto 0;     /* ← centrado horizontalmente */
+    display: block;          /* ← necesario para que margin:auto funcione */
+    border-radius: 12px;     /* ← esquinas redondeadas (opcional) */
+    box-shadow: 0 8px 25px rgba(0,0,0,.10);  /* ← sombra suave (opcional) */
+}
+
+}
+.services-hero h1{ color: var(--dark); font-size: 2.5rem; }
+.services-hero h2{
+    color: var(--muted);
+    font-weight: 400;
+    font-size: 1.1rem;
+    margin: 15px 0 25px;
+}
+
+.container-services{
+    max-width: 1400px;
+    margin: 40px auto;
+    padding: 0 20px;
+}
+.section-title{
+    text-align: center;
+    color: var(--dark);
+    margin-bottom: 30px;
+    font-size: 1.8rem;
+}
+
+.services-grid{
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 25px;
+}
+
+.service-card{
+    background: #fff;
+    padding: 25px;
+    border-radius: var(--radius-lg);
+    text-align: center;
+    box-shadow: var(--shadow-md);
+    transition: transform .3s;
+    border-bottom: 4px solid var(--secondary);
+}
+.service-card:hover{ transform: translateY(-10px); }
+.service-card h3{ color: var(--dark); margin: 12px 0; }
+.service-card p{
+    color: var(--primary);
+    font-size: .95rem;
+    margin-bottom: 15px;
+}
+
+/*=========================================================
+    11) LOGIN / REGISTRO / CITAS
+==========================================================*/
+.contenedor{
+    max-width: 1200px;
+    margin: 60px auto;
+    display: grid;
+    grid-template-columns: 1fr 500px;
+    gap: 50px;
+    padding: 0 20px;
+}
+
+.presentacion{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+.presentacion h2{
+    font-size: 2.5rem;
+    color: #222;
+    margin-bottom: 20px;
+    line-height: 1.2;
+}
+.presentacion h2 span{ color: var(--dark); }
+.presentacion p{
+    font-size: 1.05rem;
+    color: var(--muted);
+    text-align: justify;
+    line-height: 1.8;
+    margin-bottom: 30px;
+}
+.presentacion img{
+    max-width: 520px;
+    margin: auto;
+}
+
+.panel{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Tarjeta blanca con el formulario */
+.card-form{
+    width: 100%;
+    background: #fff;
+    border-radius: var(--radius-lg);
+    padding: 40px;
+    box-shadow: var(--shadow-lg);
+    transition: transform .4s;
+}
+.card-form:hover{ transform: translateY(-5px); }
+
+.card-form h2{
+    color: var(--dark);
+    text-align: center;
+    margin-bottom: 30px;
+    font-size: 1.7rem;
+}
+.card-form h2 i{ margin-right: 10px; }
+
+/* Campos con ícono */
+.input{
+    display: flex;
+    align-items: center;
+    margin-bottom: 18px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: #fafafa;
+    transition: border .3s;
+}
+.input:focus-within{
+    border: 2px solid var(--primary);
+    box-shadow: 0 0 8px rgba(37,99,235,.2);
+}
+.input i{
+    width: 50px;
+    text-align: center;
+    color: var(--primary);
+    font-size: 1.1rem;
+}
+.input input,
+.input select{
+    width: 100%;
+    border: none;
+    outline: none;
+    padding: 15px;
+    font-size: 1rem;
+    background: transparent;
+    font-family: inherit;
+}
+
+/* Botón principal */
+.btn{
+    width: 100%;
+    padding: 15px;
+    border: none;
+    border-radius: var(--radius);
+    background: var(--dark);
+    color: #fff;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: .3s;
+}
+.btn:hover{
+    background: var(--primary);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(37,99,235,.25);
+}
+
+/* Enlaces dentro de las tarjetas de login/registro */
+.card-form p{
+    text-align: center;
+    margin-top: 20px;
+    color: var(--muted);
+    font-size: .9rem;
+}
+.card-form a{
+    color: var(--primary);
+    font-weight: bold;
+}
+.card-form a:hover{ text-decoration: underline; }
+
+/* Mensajes de alerta (login, registro, etc.) */
+.mensaje-login{
+    margin-top: 20px;
+    padding: 14px 16px;
+    border-radius: var(--radius);
+    color: #fff;
+    font-size: .95rem;
+    display: none;               /* Oculto hasta que haya mensaje */
+}
+.mensaje-error{ background: var(--danger); }
+.mensaje-exito{ background: var(--success); }
+.mensaje-warning{ background: var(--warning); }
+
+/* Clase utilitaria para ocultar */
+.oculto{ display: none; }
+
+/*=========================================================
+    12) REGISTRO
+==========================================================*/
+.registro-container{
+    max-width: 1300px;
+    margin: 50px auto;
+    display: grid;
+    grid-template-columns: 1fr 520px;
+    gap: 50px;
+    align-items: center;
+    padding: 20px;
+}
+
+.registro-info h2{
+    color: var(--dark);
+    font-size: 2.2rem;
+    margin-bottom: 20px;
+}
+.registro-info p{
+    font-size: 1.05rem;
+    color: var(--muted);
+    line-height: 1.8;
+    text-align: justify;
+}
+.registro-info img{
+    max-width: 500px;
+    margin: 40px auto;
+    display: block;
+}
+
+.registro-card{
+    background: #fff;
+    padding: 40px;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+}
+.registro-card h2{
+    text-align: center;
+    color: var(--dark);
+    margin-bottom: 30px;
+}
+
+/* Fila de dos columnas dentro del formulario de registro */
+.fila{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+}
+
+/*=========================================================
+    13) PANELES (cliente / técnico / admin)
+==========================================================*/
+.panel-header{
+    background: var(--dark);
+    color: #fff;
+    padding: 15px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.panel-header h1{
+    font-size: 1.1rem;
+    margin: 0;
+}
+.panel-header .user{
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    font-size: .9rem;
+}
+.panel-header button{
+    background: var(--danger);
+    border: none;
+    color: #fff;
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: .85rem;
+}
+.panel-header button:hover{ background: #991b1b; }
+
+.panel-main{
+    padding: 30px;
+    max-width: 1000px;
+    margin: auto;
+}
+
+.panel-bienvenida{
+    background: #fff;
+    padding: 25px;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-sm);
+}
+.panel-bienvenida h2{ color: var(--dark); margin-bottom: 10px; }
+
+.panel-grid{
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 18px;
+    margin-top: 25px;
+}
+
+.panel-card{
+    background: #fff;
+    padding: 22px;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-sm);
+    border-left: 4px solid var(--dark);
+}
+.panel-card h3{
+    color: var(--dark);
+    margin-bottom: 8px;
+    font-size: 1rem;
+}
+.panel-card p{
+    color: var(--muted);
+    font-size: .88rem;
+}
+
+/* Tabla del panel administrador */
+.tabla-panel{
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+    background: #fff;
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+}
+.tabla-panel th,
+.tabla-panel td{
+    padding: 10px;
+    text-align: left;
+    font-size: .88rem;
+    border-bottom: 1px solid #eee;
+}
+.tabla-panel th{
+    background: #f3f4f6;
+    color: var(--dark);
+}
+
+/* Etiquetas de estado (ACTIVO / PENDIENTE / INACTIVO) */
+.tag{
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-size: .75rem;
+    color: #fff;
+    display: inline-block;
+}
+.tag-ACTIVO{ background: var(--success); }
+.tag-PENDIENTE{ background: var(--warning); }
+.tag-INACTIVO{ background: #6b7280; }
+
+/* Botones pequeños de acción */
+.btn-sm{
+    padding: 5px 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: .75rem;
+    margin-right: 5px;
+    color: #fff;
+}
+.btn-ok{ background: var(--success); }
+.btn-no{ background: var(--danger); }
+
+/*=========================================================
+    14) RESPONSIVE (móvil y tablet)
+==========================================================*/
+@media(max-width: 1000px){
+    .container,
+    .contenedor,
+    .registro-container{
+        grid-template-columns: 1fr;
+        padding: 20px;
+    }
+    .fila{ grid-template-columns: 1fr; }
+    .main-nav ul{
+        gap: 15px;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    .footer-grid{ grid-template-columns: 1fr; }
+    .hero-content h2{ font-size: 1.4rem; }
+}

@@ -1,0 +1,85 @@
+# ==========================================================
+# .gitignore — Motato Electronics
+# ----------------------------------------------------------
+# Le dice a Git qué archivos NO debe subir a GitHub.
+# Especialmente importante para NO exponer credenciales.
+# ==========================================================
+
+# ==========================================================
+# 1) CONFIGURACIÓN LOCAL CON CREDENCIALES (CRÍTICO)
+# ----------------------------------------------------------
+# Este archivo contiene:
+#   - Contraseña de MySQL
+#   - Clave secreta JWT
+#   - Credenciales de correo (Mailtrap)
+# NO DEBE subirse a GitHub bajo ninguna circunstancia.
+# ==========================================================
+src/main/resources/application.properties
+src/main/resources/application-*.properties
+*.env
+.env
+
+# ==========================================================
+# 2) ARCHIVOS COMPILADOS POR MAVEN
+# ----------------------------------------------------------
+# Se regeneran automáticamente al compilar.
+# ==========================================================
+target/
+!.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+
+# ==========================================================
+# 3) IDE: SPRING TOOL SUITE (STS)
+# ==========================================================
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+
+# ==========================================================
+# 4) IDE: INTELLIJ IDEA
+# ==========================================================
+.idea
+*.iws
+*.iml
+*.ipr
+
+# ==========================================================
+# 5) IDE: NETBEANS
+# ==========================================================
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+build/
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+# ==========================================================
+# 6) IDE: VISUAL STUDIO CODE
+# ==========================================================
+.vscode/
+
+# ==========================================================
+# 7) ARCHIVOS DE LOGS
+# ==========================================================
+*.log
+logs/
+
+# ==========================================================
+# 8) SISTEMA OPERATIVO
+# ==========================================================
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ==========================================================
+# 9) OTROS
+# ==========================================================
+HELP.md
+.mvn/wrapper/maven-wrapper.jar

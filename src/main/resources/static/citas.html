@@ -1,0 +1,859 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iniciar Sesión | Motato Electronics</title>
+
+    <!-- Estilos globales del proyecto -->
+    <link rel="stylesheet" href="/css/style.css">
+
+    <!-- Iconos FontAwesome -->
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+
+    <style>
+        /* =====================================================
+           DISEÑO GENERAL DE LA PÁGINA DE LOGIN
+           - Fondo con gradiente suave
+           - Tarjeta blanca centrada
+           - Estilo moderno
+           ===================================================== */
+
+        body.login-page {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #e8eef9 0%, #f4f7fb 50%, #eef3fb 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .login-wrapper {
+            width: 100%;
+            max-width: 460px;
+            padding: 30px 20px;
+        }
+
+        /* Tarjeta blanca principal */
+        .login-card {
+            background: #ffffff;
+            border-radius: 20px;
+            padding: 45px 40px;
+            box-shadow: 0 15px 50px rgba(30, 58, 138, 0.12);
+            border: 1px solid rgba(30, 58, 138, 0.05);
+        }
+
+        /* Encabezado de la tarjeta */
+        .login-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .login-header h1 {
+            color: #1E3A8A;
+            font-size: 1.6rem;
+            margin: 0 0 6px 0;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        .login-header p {
+            color: #6b7280;
+            font-size: .85rem;
+            margin: 0;
+            font-weight: 400;
+        }
+
+        /* Etiquetas de los campos */
+        .login-card label {
+            display: block;
+            font-size: .85rem;
+            color: #1f2937;
+            margin-top: 18px;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .login-card label .req {
+            color: #dc2626;
+            margin-left: 2px;
+        }
+
+        /* Envoltura de cada campo con ícono */
+        .input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .input-wrapper input {
+            width: 100%;
+            padding: 14px 45px 14px 16px;
+            border: 1.5px solid #e5e7eb;
+            border-radius: 10px;
+            font-size: .95rem;
+            font-family: inherit;
+            background: #fafbfc;
+            transition: all .2s ease;
+            box-sizing: border-box;
+            color: #111827;
+        }
+
+        .input-wrapper input::placeholder {
+            color: #9ca3af;
+        }
+
+        .input-wrapper input:focus {
+            outline: none;
+            border-color: #1E3A8A;
+            background: #ffffff;
+            box-shadow: 0 0 0 4px rgba(30, 58, 138, 0.08);
+        }
+
+        /* Ícono del ojo (mostrar/ocultar contraseña) */
+        .toggle-password {
+            position: absolute;
+            right: 15px;
+            cursor: pointer;
+            color: #9ca3af;
+            font-size: 1rem;
+            padding: 4px;
+            transition: color .2s;
+        }
+
+        .toggle-password:hover {
+            color: #1E3A8A;
+        }
+
+        /* Enlace "¿Has olvidado la contraseña?" */
+        .forgot-link {
+            display: inline-block;
+            margin-top: 10px;
+            font-size: .82rem;
+            color: #1E3A8A;
+            text-decoration: underline;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        .forgot-link:hover {
+            color: #1e40af;
+        }
+
+        /* Botón principal "Siguiente" */
+        .btn-primary-full {
+            width: 100%;
+            margin-top: 25px;
+            padding: 15px;
+            border: none;
+            border-radius: 10px;
+            background: #1E3A8A;
+            color: #ffffff;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all .3s ease;
+            letter-spacing: 0.3px;
+        }
+
+        .btn-primary-full:hover {
+            background: #1e40af;
+            transform: translateY(-1px);
+            box-shadow: 0 8px 20px rgba(30, 58, 138, 0.25);
+        }
+
+        .btn-primary-full:disabled {
+            background: #9ca3af;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Bloque: ¿Aún no tienes cuenta? */
+        .register-block {
+            text-align: center;
+            margin-top: 22px;
+            font-size: .85rem;
+            color: #6b7280;
+        }
+
+        .register-block a {
+            color: #1E3A8A;
+            font-weight: 700;
+            text-decoration: underline;
+            display: inline-block;
+            margin-top: 4px;
+        }
+
+        .register-block a:hover {
+            color: #1e40af;
+        }
+
+        /* Mensajes del login */
+        .mensaje-login {
+            margin-top: 16px;
+            padding: 12px 16px;
+            border-radius: 8px;
+            color: #ffffff;
+            font-size: .88rem;
+            display: none;
+            text-align: center;
+        }
+        .mensaje-error { background: #C0392B; }
+        .mensaje-exito { background: #16a34a; }
+
+        /* =====================================================
+           MODAL DE RECUPERACIÓN DE CONTRASEÑA
+           ===================================================== */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(15, 23, 42, 0.6);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(4px);
+        }
+
+        .modal-overlay.active { display: flex; }
+
+        .modal-content {
+            background: #fff;
+            padding: 35px;
+            border-radius: 18px;
+            width: 90%;
+            max-width: 440px;
+            box-shadow: 0 20px 60px rgba(0,0,0,.25);
+            max-height: 90vh;
+            overflow-y: auto;
+            animation: fadeIn .3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to   { opacity: 1; transform: scale(1); }
+        }
+
+        .modal-content h2 {
+            color: #1E3A8A;
+            margin: 0 0 8px 0;
+            font-size: 1.25rem;
+            text-align: center;
+        }
+
+        .modal-content .modal-sub {
+            color: #6b7280;
+            font-size: .85rem;
+            text-align: center;
+            margin: 0 0 22px 0;
+        }
+
+        .modal-content label {
+            display: block;
+            font-size: .85rem;
+            color: #1f2937;
+            margin-top: 14px;
+            margin-bottom: 6px;
+            font-weight: 600;
+        }
+
+        .modal-content input {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1.5px solid #e5e7eb;
+            border-radius: 10px;
+            font-size: .95rem;
+            font-family: inherit;
+            background: #fafbfc;
+            box-sizing: border-box;
+            transition: all .2s;
+        }
+
+        .modal-content input:focus {
+            outline: none;
+            border-color: #1E3A8A;
+            background: #fff;
+            box-shadow: 0 0 0 4px rgba(30, 58, 138, 0.08);
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 24px;
+        }
+
+        .modal-actions button {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: .92rem;
+            font-weight: 600;
+            transition: all .2s;
+        }
+
+        .btn-cerrar {
+            background: #f3f4f6;
+            color: #374151;
+        }
+        .btn-cerrar:hover { background: #e5e7eb; }
+
+        .btn-guardar {
+            background: #1E3A8A;
+            color: #fff;
+        }
+        .btn-guardar:hover { background: #1e40af; }
+
+        .mensaje-modal {
+            margin-top: 14px;
+            font-size: .85rem;
+            text-align: center;
+            padding: 10px;
+            border-radius: 8px;
+            display: none;
+        }
+        .mensaje-modal.error { background: #fee2e2; color: #991b1b; display: block; }
+        .mensaje-modal.exito { background: #dcfce7; color: #166534; display: block; }
+
+        /* Indicador de paso */
+        .paso-indicador {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+        .paso-indicador .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #e5e7eb;
+            transition: .3s;
+        }
+        .paso-indicador .dot.active {
+            background: #1E3A8A;
+            width: 26px;
+            border-radius: 5px;
+        }
+
+        /* =====================================================
+           INDICADOR DE REQUISITOS DE CONTRASEÑA
+           (usado en el modal de recuperación)
+           ===================================================== */
+        .password-requirements {
+            margin-top: 10px;
+            padding: 12px 14px;
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+            font-size: .8rem;
+            display: none;
+        }
+
+        .password-requirements.visible {
+            display: block;
+        }
+
+        .password-requirements .titulo {
+            color: #6b7280;
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: .78rem;
+        }
+
+        .password-requirements .req-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 3px 0;
+            color: #9ca3af;
+            transition: color .2s;
+        }
+
+        .password-requirements .req-item .icon {
+            font-size: .85rem;
+            width: 14px;
+            text-align: center;
+        }
+
+        .password-requirements .req-item.ok {
+            color: #16a34a;
+            font-weight: 600;
+        }
+
+        .password-requirements .req-item.fail {
+            color: #dc2626;
+        }
+
+        /* Responsive para móviles */
+        @media (max-width: 480px) {
+            .login-card {
+                padding: 32px 24px;
+                border-radius: 16px;
+            }
+            .login-header h1 {
+                font-size: 1.35rem;
+            }
+        }
+    </style>
+</head>
+<body class="login-page">
+
+    <!-- =====================================================
+         TARJETA DE LOGIN CENTRADA
+         ===================================================== -->
+    <div class="login-wrapper">
+        <div class="login-card">
+
+            <!-- Encabezado -->
+            <div class="login-header">
+                <h1>MOTATO ELECTRONICS</h1>
+                <p>Expertos en Tecnología Visual</p>
+            </div>
+
+            <!-- Formulario de login -->
+            <form id="formLogin" onsubmit="return false;">
+
+                <!-- Campo: correo -->
+                <label for="correo">
+                    Correo electrónico <span class="req">*</span>
+                </label>
+                <div class="input-wrapper">
+                    <input type="email" id="correo"
+                           placeholder="Correo electrónico" required>
+                </div>
+
+                <!-- Campo: contraseña -->
+                <label for="password">
+                    Contraseña <span class="req">*</span>
+                </label>
+                <div class="input-wrapper">
+                    <input type="password" id="password"
+                           placeholder="Contraseña" required>
+                    <!-- Ícono del ojo -->
+                    <i class="fa-solid fa-eye toggle-password"
+                       id="togglePassword"
+                       onclick="togglePassword()"></i>
+                </div>
+
+                <!-- Enlace olvidé contraseña -->
+                <a class="forgot-link" onclick="abrirModalRecuperar()">
+                    ¿Has olvidado la contraseña?
+                </a>
+
+                <!-- Botón principal -->
+                <button type="submit" class="btn-primary-full"
+                        onclick="iniciarSesion()">
+                    Siguiente
+                </button>
+
+                <!-- Mensaje de error/éxito -->
+                <div id="mensajeLogin" class="mensaje-login"></div>
+
+                <!-- Enlace a registro -->
+                <div class="register-block">
+                    ¿Aún no tienes una cuenta?
+                    <br>
+                    <a href="/registro.html">Regístrate aquí</a>
+                </div>
+
+            </form>
+        </div>
+    </div>
+
+    <!-- =====================================================
+         MODAL: RECUPERAR CONTRASEÑA
+         ===================================================== -->
+    <div class="modal-overlay" id="modalRecuperar">
+        <div class="modal-content">
+
+            <!-- Indicador de paso (2 puntos) -->
+            <div class="paso-indicador">
+                <div class="dot active" id="dotPaso1"></div>
+                <div class="dot" id="dotPaso2"></div>
+            </div>
+
+            <!-- ============================================
+                 PASO 1: Ingresar correo
+                 ============================================ -->
+            <div id="paso1">
+                <h2><i class="fa-solid fa-key"></i> Recuperar contraseña</h2>
+                <p class="modal-sub">
+                    Ingresa tu correo y te enviaremos un código de verificación.
+                </p>
+
+                <label for="correoRecuperar">Correo electrónico</label>
+                <input type="email" id="correoRecuperar"
+                       placeholder="tu@correo.com" required>
+
+                <div id="msgRecuperar1" class="mensaje-modal"></div>
+
+                <div class="modal-actions">
+                    <button type="button" class="btn-cerrar"
+                            onclick="cerrarModalRecuperar()">Cancelar</button>
+                    <button type="button" class="btn-guardar"
+                            onclick="solicitarCodigoRecuperacion()">
+                        Enviar código
+                    </button>
+                </div>
+            </div>
+
+            <!-- ============================================
+                 PASO 2: Ingresar código y nueva contraseña
+                 ============================================ -->
+            <div id="paso2" style="display:none;">
+                <h2><i class="fa-solid fa-shield-halved"></i> Verifica el código</h2>
+                <p class="modal-sub">
+                    Te enviamos un código a <b><span id="correoMostrado"></span></b>
+                </p>
+
+                <label for="codigoRecuperar">Código de verificación (6 dígitos)</label>
+                <input type="text" id="codigoRecuperar"
+                       placeholder="000000" maxlength="6" required>
+
+                <label for="nuevaPassword">Nueva contraseña</label>
+                <input type="password" id="nuevaPassword"
+                       placeholder="Crea una contraseña segura"
+                       onfocus="mostrarRequisitos('reqRecuperar')"
+                       oninput="actualizarRequisitos('nuevaPassword', 'reqRecuperar')"
+                       required>
+
+                <!-- Indicador de requisitos en vivo -->
+                <div class="password-requirements" id="reqRecuperar">
+                    <div class="titulo">Requisitos de seguridad:</div>
+                    <div class="req-item" data-req="length">
+                        <span class="icon">❌</span> Al menos 8 caracteres
+                    </div>
+                    <div class="req-item" data-req="upper">
+                        <span class="icon">❌</span> Una letra mayúscula
+                    </div>
+                    <div class="req-item" data-req="lower">
+                        <span class="icon">❌</span> Una letra minúscula
+                    </div>
+                    <div class="req-item" data-req="number">
+                        <span class="icon">❌</span> Un número
+                    </div>
+                </div>
+
+                <div id="msgRecuperar2" class="mensaje-modal"></div>
+
+                <div class="modal-actions">
+                    <button type="button" class="btn-cerrar"
+                            onclick="volverPaso1()">Atrás</button>
+                    <button type="button" class="btn-guardar"
+                            onclick="cambiarPassword()">
+                        Cambiar contraseña
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    
+        <!-- =====================================================
+         SCRIPTS
+         ===================================================== -->
+    <script>
+        // -----------------------------------------
+        // Variable global: correo en proceso de recuperación
+        // -----------------------------------------
+        let correoRecuperacion = "";
+
+        // =========================================
+        // 1) MOSTRAR / OCULTAR CONTRASEÑA (login)
+        // =========================================
+        function togglePassword() {
+            const input = document.getElementById("password");
+            const icono = document.getElementById("togglePassword");
+
+            if (input.type === "password") {
+                input.type = "text";
+                icono.classList.remove("fa-eye");
+                icono.classList.add("fa-eye-slash");
+            } else {
+                input.type = "password";
+                icono.classList.remove("fa-eye-slash");
+                icono.classList.add("fa-eye");
+            }
+        }
+
+        // =========================================
+        // 2) INICIAR SESIÓN
+        // =========================================
+        async function iniciarSesion() {
+            const correo = document.getElementById("correo").value.trim();
+            const password = document.getElementById("password").value;
+            const msg = document.getElementById("mensajeLogin");
+
+            // Limpiar mensaje anterior
+            msg.style.display = "none";
+            msg.classList.remove("mensaje-error", "mensaje-exito");
+
+            if (!correo || !password) {
+                msg.textContent = "Completa todos los campos.";
+                msg.classList.add("mensaje-error");
+                msg.style.display = "block";
+                return;
+            }
+
+            try {
+                const resp = await fetch("/api/auth/login", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ correo, password })
+                });
+
+                const data = await resp.json();
+
+                if (!data.correcto) {
+                    msg.textContent = data.mensaje || "Credenciales incorrectas.";
+                    msg.classList.add("mensaje-error");
+                    msg.style.display = "block";
+                    return;
+                }
+
+                // Guardar sesión en localStorage
+                localStorage.setItem("usuario", JSON.stringify({
+                    id: data.id,
+                    nombre: data.nombre,
+                    correo: data.correo,
+                    rol: data.rol
+                }));
+
+                // 🔒 Guardar el token JWT para las siguientes peticiones
+                localStorage.setItem("token", data.token);
+
+                msg.textContent = "Ingreso exitoso. Redirigiendo...";
+                msg.classList.add("mensaje-exito");
+                msg.style.display = "block";
+
+                // Redirigir según el rol
+                setTimeout(() => {
+                    switch (data.rol) {
+                        case "ADMINISTRADOR":
+                            window.location.href = "/admin.html";
+                            break;
+                        case "TECNICO":
+                            window.location.href = "/tecnico.html";
+                            break;
+                        case "CLIENTE":
+                        default:
+                            window.location.href = "/cliente.html";
+                            break;
+                    }
+                }, 700);
+
+            } catch (err) {
+                msg.textContent = "Error de conexión con el servidor.";
+                msg.classList.add("mensaje-error");
+                msg.style.display = "block";
+                console.error(err);
+            }
+        }
+
+        // =========================================
+        // 3) UTILIDADES PARA VALIDAR CONTRASEÑAS EN VIVO
+        // =========================================
+
+        /** Muestra el bloque de requisitos al enfocar el campo. */
+        function mostrarRequisitos(idRequisitos) {
+            document.getElementById(idRequisitos).classList.add("visible");
+        }
+
+        /** Actualiza en vivo los indicadores de cada requisito. */
+        function actualizarRequisitos(inputId, requisitosId) {
+            const valor = document.getElementById(inputId).value;
+            const contenedor = document.getElementById(requisitosId);
+
+            const reglas = {
+                length: valor.length >= 8,
+                upper:  /[A-Z]/.test(valor),
+                lower:  /[a-z]/.test(valor),
+                number: /[0-9]/.test(valor)
+            };
+
+            contenedor.querySelectorAll(".req-item").forEach(item => {
+                const req = item.dataset.req;
+                const icono = item.querySelector(".icon");
+
+                if (reglas[req]) {
+                    item.classList.add("ok");
+                    item.classList.remove("fail");
+                    icono.textContent = "✅";
+                } else {
+                    item.classList.add("fail");
+                    item.classList.remove("ok");
+                    icono.textContent = "❌";
+                }
+            });
+        }
+
+        /** Devuelve true si la contraseña cumple la política. */
+        function passwordValida(password) {
+            return password.length >= 8
+                && /[A-Z]/.test(password)
+                && /[a-z]/.test(password)
+                && /[0-9]/.test(password);
+        }
+
+        // =========================================
+        // 4) ABRIR MODAL DE RECUPERACIÓN
+        // =========================================
+        function abrirModalRecuperar() {
+            // Resetear al paso 1
+            document.getElementById("paso1").style.display = "block";
+            document.getElementById("paso2").style.display = "none";
+            document.getElementById("dotPaso1").classList.add("active");
+            document.getElementById("dotPaso2").classList.remove("active");
+
+            // Limpiar campos
+            document.getElementById("correoRecuperar").value = "";
+            document.getElementById("codigoRecuperar").value = "";
+            document.getElementById("nuevaPassword").value = "";
+            document.getElementById("msgRecuperar1").className = "mensaje-modal";
+            document.getElementById("msgRecuperar1").textContent = "";
+            document.getElementById("msgRecuperar2").className = "mensaje-modal";
+            document.getElementById("msgRecuperar2").textContent = "";
+
+            // Reset del indicador de requisitos
+            const reqRec = document.getElementById("reqRecuperar");
+            reqRec.classList.remove("visible");
+            reqRec.querySelectorAll(".req-item").forEach(item => {
+                item.classList.remove("ok", "fail");
+                item.querySelector(".icon").textContent = "❌";
+            });
+
+            document.getElementById("modalRecuperar").classList.add("active");
+        }
+
+        function cerrarModalRecuperar() {
+            document.getElementById("modalRecuperar").classList.remove("active");
+        }
+
+        function volverPaso1() {
+            document.getElementById("paso1").style.display = "block";
+            document.getElementById("paso2").style.display = "none";
+            document.getElementById("dotPaso1").classList.add("active");
+            document.getElementById("dotPaso2").classList.remove("active");
+        }
+
+        // =========================================
+        // 5) PASO 1: SOLICITAR CÓDIGO DE RECUPERACIÓN
+        // =========================================
+        async function solicitarCodigoRecuperacion() {
+            const correo = document.getElementById("correoRecuperar").value.trim();
+            const msg = document.getElementById("msgRecuperar1");
+
+            msg.className = "mensaje-modal";
+            msg.textContent = "";
+
+            if (!correo) {
+                msg.className = "mensaje-modal error";
+                msg.textContent = "Debes ingresar un correo.";
+                return;
+            }
+
+            try {
+                const resp = await fetch("/api/auth/recuperar/solicitar", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ correo })
+                });
+
+                if (!resp.ok) {
+                    const txt = await resp.text();
+                    msg.className = "mensaje-modal error";
+                    msg.textContent = txt || "No se pudo enviar el código.";
+                    return;
+                }
+
+                // Guardar el correo para el paso 2
+                correoRecuperacion = correo;
+                document.getElementById("correoMostrado").textContent = correo;
+
+                // Cambiar al paso 2
+                document.getElementById("paso1").style.display = "none";
+                document.getElementById("paso2").style.display = "block";
+                document.getElementById("dotPaso1").classList.remove("active");
+                document.getElementById("dotPaso2").classList.add("active");
+
+            } catch (err) {
+                msg.className = "mensaje-modal error";
+                msg.textContent = "Error de conexión.";
+                console.error(err);
+            }
+        }
+
+        // =========================================
+        // 6) PASO 2: VALIDAR CÓDIGO Y CAMBIAR CONTRASEÑA
+        // =========================================
+        async function cambiarPassword() {
+            const codigo = document.getElementById("codigoRecuperar").value.trim();
+            const nuevaPassword = document.getElementById("nuevaPassword").value;
+            const msg = document.getElementById("msgRecuperar2");
+
+            msg.className = "mensaje-modal";
+            msg.textContent = "";
+
+            if (!codigo || !nuevaPassword) {
+                msg.className = "mensaje-modal error";
+                msg.textContent = "Completa todos los campos.";
+                return;
+            }
+
+            // Validar política de contraseñas
+            if (!passwordValida(nuevaPassword)) {
+                msg.className = "mensaje-modal error";
+                msg.textContent = "La contraseña no cumple con los requisitos de seguridad.";
+                return;
+            }
+
+            try {
+                const resp = await fetch("/api/auth/recuperar/validar", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        correo: correoRecuperacion,
+                        codigo: codigo,
+                        nuevaPassword: nuevaPassword
+                    })
+                });
+
+                if (!resp.ok) {
+                    const txt = await resp.text();
+                    msg.className = "mensaje-modal error";
+                    msg.textContent = txt || "No se pudo cambiar la contraseña.";
+                    return;
+                }
+
+                msg.className = "mensaje-modal exito";
+                msg.textContent = "✅ Contraseña actualizada correctamente.";
+
+                // Cerrar el modal después de 1.5s
+                setTimeout(() => {
+                    cerrarModalRecuperar();
+                }, 1500);
+
+            } catch (err) {
+                msg.className = "mensaje-modal error";
+                msg.textContent = "Error de conexión.";
+                console.error(err);
+            }
+        }
+
+        // =========================================
+        // 7) CERRAR MODAL AL HACER CLIC EN EL FONDO
+        // =========================================
+        document.getElementById("modalRecuperar").addEventListener("click", function (e) {
+            if (e.target === this) {
+                cerrarModalRecuperar();
+            }
+        });
+    </script>
+
+</body>
+</html>

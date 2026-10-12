@@ -1,0 +1,1154 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel Técnico | Motato Electronics</title>
+
+    <!-- Estilos globales del proyecto -->
+    <link rel="stylesheet" href="/css/style.css">
+
+    <!-- Iconos FontAwesome -->
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+
+    <style>
+        /* =====================================================
+           MODALES (ventanas emergentes)
+           ===================================================== */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,.5);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-overlay.active { display: flex; }
+
+        .modal-content {
+            background: #fff;
+            padding: 30px;
+            border-radius: var(--radius-lg);
+            width: 90%;
+            max-width: 700px;
+            box-shadow: var(--shadow-lg);
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        .modal-content h2 {
+            color: var(--dark);
+            margin-bottom: 20px;
+            font-size: 1.4rem;
+        }
+        .modal-content label {
+            display: block;
+            font-size: .85rem;
+            color: #333;
+            margin-top: 14px;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+        .modal-content input,
+        .modal-content textarea,
+        .modal-content select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: .95rem;
+            font-family: inherit;
+            box-sizing: border-box;
+        }
+        .modal-content textarea { resize: vertical; min-height: 60px; }
+        .modal-content input:focus,
+        .modal-content textarea:focus,
+        .modal-content select:focus {
+            outline: none;
+            border: 2px solid var(--primary);
+        }
+
+        /* Botones del modal */
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 25px;
+        }
+        .modal-actions button {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: .95rem;
+            font-weight: 600;
+        }
+        .btn-cerrar { background: #e5e7eb; color: #333; }
+        .btn-cerrar:hover { background: #d1d5db; }
+        .btn-enviar { background: var(--dark); color: #fff; }
+        .btn-enviar:hover { background: var(--primary); }
+
+        /* Botones pequeños de acción */
+        .btn-accion {
+            border: none;
+            padding: 6px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: .75rem;
+            font-weight: 600;
+            margin-right: 4px;
+            color: #fff;
+        }
+        .btn-aceptar { background: var(--success); }
+        .btn-aceptar:hover { background: #1e8449; }
+        .btn-reprogramar { background: var(--warning); }
+        .btn-reprogramar:hover { background: #d68910; }
+        .btn-iniciar { background: #3b82f6; }
+        .btn-iniciar:hover { background: #2563eb; }
+        .btn-completar { background: #16a34a; }
+        .btn-completar:hover { background: #15803d; }
+        .btn-retroceder { background: #6b7280; }
+        .btn-retroceder:hover { background: #4b5563; }
+        .btn-agregar { background: var(--primary); }
+
+        /* Etiquetas de estado de las citas */
+        .estado-tag {
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: .75rem;
+            color: #fff;
+            display: inline-block;
+            font-weight: 600;
+        }
+        .estado-PENDIENTE                { background: #f59e0b; }
+        .estado-REPROGRAMACION_PENDIENTE { background: #8b5cf6; }
+        .estado-ASIGNADA                 { background: #3b82f6; }
+        .estado-EN_PROCESO               { background: #f97316; }
+        .estado-COMPLETADA               { background: #16a34a; }
+        .estado-CANCELADA                { background: #6b7280; }
+
+        .sin-datos {
+            text-align: center;
+            padding: 40px;
+            color: var(--muted);
+            background: #fff;
+            border-radius: var(--radius);
+            margin-top: 15px;
+        }
+        .seccion-titulo {
+            margin-top: 40px;
+            color: var(--dark);
+            border-bottom: 3px solid var(--secondary);
+            padding-bottom: 8px;
+            display: inline-block;
+        }
+
+        /* Sección de repuestos */
+        .repuestos-section {
+            background: #f9fafb;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 15px;
+        }
+        .repuestos-tabs {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 12px;
+            border-bottom: 2px solid var(--border);
+        }
+        .repuestos-tabs button {
+            padding: 8px 16px;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            font-size: .9rem;
+            font-weight: 600;
+            color: #666;
+            border-bottom: 3px solid transparent;
+            margin-bottom: -2px;
+        }
+        .repuestos-tabs button.active {
+            color: var(--primary);
+            border-bottom: 3px solid var(--primary);
+        }
+        .repuesto-form {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+        .repuesto-form .full { grid-column: 1 / -1; }
+        .repuestos-tabla {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            background: #fff;
+            border-radius: 8px;
+            overflow: hidden;
+            font-size: .82rem;
+        }
+        .repuestos-tabla th,
+        .repuestos-tabla td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+        .repuestos-tabla th {
+            background: #f3f4f6;
+            color: var(--dark);
+            font-weight: 600;
+        }
+        .rep-tag {
+            padding: 3px 8px;
+            border-radius: 10px;
+            font-size: .7rem;
+            color: #fff;
+            display: inline-block;
+            font-weight: 600;
+        }
+        .rep-PENDIENTE { background: #f59e0b; }
+        .rep-APROBADO  { background: #16a34a; }
+        .rep-RECHAZADO { background: #dc2626; }
+
+        /* Resumen financiero */
+        .resumen-financiero {
+            background: #e0f2fe;
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: 15px;
+            font-size: .9rem;
+            color: #075985;
+        }
+        .resumen-financiero .fila {
+            display: flex;
+            justify-content: space-between;
+            padding: 4px 0;
+        }
+        .resumen-financiero .total {
+            border-top: 2px solid #0284c7;
+            margin-top: 6px;
+            padding-top: 8px;
+            font-size: 1.05rem;
+            font-weight: bold;
+        }
+
+        /* Opciones de garantía (radio buttons tipo tarjetas) */
+        .opcion-garantia {
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            padding: 10px;
+            text-align: center;
+            cursor: pointer;
+            font-weight: 600;
+            color: #333;
+            transition: .2s;
+            margin: 0;
+            font-size: .82rem;
+        }
+        .opcion-garantia input[type="radio"] { display: none; }
+        .opcion-garantia:has(input:checked) {
+            border-color: var(--primary);
+            background: #eff6ff;
+            color: var(--primary);
+        }
+        .opcion-garantia:hover { border-color: var(--primary); }
+    </style>
+</head>
+<body>
+    
+        <!-- =====================================================
+         CABECERA DEL PANEL
+         ===================================================== -->
+    <header class="panel-header" style="background:#065f46;">
+        <h1>Motato Electronics — Panel Técnico</h1>
+        <div class="user">
+            <span id="nombreUsuario"></span>
+            <button onclick="cerrarSesion()">Cerrar sesión</button>
+        </div>
+    </header>
+
+    <!-- =====================================================
+         CONTENIDO PRINCIPAL
+         ===================================================== -->
+    <main class="panel-main">
+
+        <div class="panel-bienvenida">
+            <h2>Bienvenido, <span id="nombre"></span> 🔧</h2>
+            <p>Aquí verás las citas pendientes que puedes aceptar o reprogramar, y tus citas asignadas.</p>
+        </div>
+
+        <!-- =================================================
+             SECCIÓN 1: Citas pendientes
+             ================================================= -->
+        <h2 class="seccion-titulo">
+            <i class="fa-solid fa-hourglass-half"></i> Citas pendientes
+        </h2>
+
+        <table class="tabla-panel" id="tablaPendientes">
+            <thead>
+                <tr>
+                    <th>Fecha</th>
+                    <th>Hora</th>
+                    <th>Cliente</th>
+                    <th>Teléfono</th>
+                    <th>Dirección</th>
+                    <th>Descripción</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody id="tbodyPendientes"></tbody>
+        </table>
+        <div id="sinPendientes" class="sin-datos" style="display:none;">
+            No hay citas pendientes por atender.
+        </div>
+
+        <!-- =================================================
+             SECCIÓN 2: Citas asignadas al técnico
+             ================================================= -->
+        <h2 class="seccion-titulo">
+            <i class="fa-solid fa-clipboard-check"></i> Mis citas asignadas
+        </h2>
+
+        <table class="tabla-panel" id="tablaAsignadas">
+            <thead>
+                <tr>
+                    <th>Fecha</th>
+                    <th>Hora</th>
+                    <th>Cliente</th>
+                    <th>Teléfono</th>
+                    <th>Dirección</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody id="tbodyAsignadas"></tbody>
+        </table>
+        <div id="sinAsignadas" class="sin-datos" style="display:none;">
+            No tienes citas asignadas todavía.
+        </div>
+
+    </main>
+
+    <!-- =====================================================
+         MODAL: Proponer nueva hora
+         ===================================================== -->
+    <div class="modal-overlay" id="modalReprogramar">
+        <div class="modal-content">
+            <h2><i class="fa-solid fa-clock-rotate-left"></i> Proponer nueva hora</h2>
+
+            <p style="color:#666; font-size:.9rem; margin-bottom:15px;">
+                Cita original: <b><span id="citaOriginal"></span></b>
+            </p>
+
+            <label for="fechaPropuesta">Nueva fecha</label>
+            <input type="date" id="fechaPropuesta" required>
+
+            <label for="horaPropuesta">Nueva hora</label>
+            <input type="time" id="horaPropuesta" step="60" required>
+
+            <label for="motivoReprogramacion">Motivo</label>
+            <textarea id="motivoReprogramacion"
+                      placeholder="Ej: Tengo otra cita a esa hora"></textarea>
+
+            <div id="mensajeReprogramar"
+                 style="margin-top:12px; font-size:.85rem; text-align:center;"></div>
+
+            <div class="modal-actions">
+                <button type="button" class="btn-cerrar" onclick="cerrarModal()">Cancelar</button>
+                <button type="button" class="btn-enviar" onclick="enviarReprogramacion()">
+                    Enviar propuesta
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- =====================================================
+         MODAL: Completar cita
+         ===================================================== -->
+    <div class="modal-overlay" id="modalCompletar">
+        <div class="modal-content">
+            <h2><i class="fa-solid fa-check-circle"></i> Completar cita</h2>
+
+            <p style="color:#666; font-size:.9rem; margin-bottom:15px;">
+                Cita #<b><span id="citaCompletarId"></span></b> —
+                Cliente: <b><span id="clienteCompletar"></span></b>
+            </p>
+
+            <!-- Repuestos -->
+            <div class="repuestos-section">
+                <h3 style="color:var(--dark); margin:0 0 10px 0; font-size:1rem;">
+                    🔧 Repuestos usados
+                </h3>
+
+                <div class="repuestos-tabs">
+                    <button type="button" id="tabInventario" class="active"
+                            onclick="cambiarTabRepuesto('inventario')">
+                        📦 Del inventario
+                    </button>
+                    <button type="button" id="tabManual"
+                            onclick="cambiarTabRepuesto('manual')">
+                        ✏️ Manual
+                    </button>
+                </div>
+
+                <!-- Formulario del inventario -->
+                <div id="formInventario" class="repuesto-form">
+                    <div class="full">
+                        <label for="repuestoSelect">Selecciona un repuesto</label>
+                        <select id="repuestoSelect">
+                            <option value="">-- Cargando... --</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="cantidadInv">Cantidad</label>
+                        <input type="number" id="cantidadInv" value="1" min="1">
+                    </div>
+                    <div style="display:flex; align-items:flex-end;">
+                        <button type="button" class="btn-accion btn-agregar"
+                                style="width:100%; padding:11px;"
+                                onclick="agregarRepuestoInventario()">
+                            <i class="fa-solid fa-plus"></i> Agregar
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Formulario manual -->
+                <div id="formManual" class="repuesto-form" style="display:none;">
+                    <div class="full">
+                        <label for="nombreManual">Nombre del repuesto</label>
+                        <input type="text" id="nombreManual"
+                               placeholder="Ej: Panel genérico 55&quot; comprado por fuera">
+                    </div>
+                    <div>
+                        <label for="precioManual">Precio unitario (COP)</label>
+                        <input type="number" id="precioManual" min="0" step="1000"
+                               placeholder="Ej: 180000">
+                    </div>
+                    <div>
+                        <label for="cantidadManual">Cantidad</label>
+                        <input type="number" id="cantidadManual" value="1" min="1">
+                    </div>
+
+                    <div class="full" style="margin-top:12px;">
+                        <label style="margin-bottom:8px;">Garantía del repuesto</label>
+
+                        <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px;">
+                            <label class="opcion-garantia">
+                                <input type="radio" name="garantiaManual" value="sin"
+                                       checked onchange="actualizarGarantiaManual()">
+                                <span>❌ Sin garantía</span>
+                            </label>
+                            <label class="opcion-garantia">
+                                <input type="radio" name="garantiaManual" value="30"
+                                       onchange="actualizarGarantiaManual()">
+                                <span>30 días</span>
+                            </label>
+                            <label class="opcion-garantia">
+                                <input type="radio" name="garantiaManual" value="60"
+                                       onchange="actualizarGarantiaManual()">
+                                <span>60 días</span>
+                            </label>
+                            <label class="opcion-garantia">
+                                <input type="radio" name="garantiaManual" value="90"
+                                       onchange="actualizarGarantiaManual()">
+                                <span>90 días</span>
+                            </label>
+                            <label class="opcion-garantia">
+                                <input type="radio" name="garantiaManual" value="180"
+                                       onchange="actualizarGarantiaManual()">
+                                <span>180 días</span>
+                            </label>
+                            <label class="opcion-garantia">
+                                <input type="radio" name="garantiaManual" value="otro"
+                                       onchange="actualizarGarantiaManual()">
+                                <span>Otro</span>
+                            </label>
+                        </div>
+
+                        <div id="divGarantiaOtro" style="display:none; margin-top:10px;">
+                            <input type="number" id="diasGarantiaManual" min="1" value="120"
+                                   placeholder="Días de garantía personalizados">
+                        </div>
+                    </div>
+
+                    <div class="full">
+                        <button type="button" class="btn-accion btn-agregar"
+                                style="width:100%; padding:11px;"
+                                onclick="agregarRepuestoManual()">
+                            <i class="fa-solid fa-plus"></i> Agregar repuesto manual
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Tabla de repuestos agregados -->
+                <table class="repuestos-tabla" id="tablaRepuestosAgregados">
+                    <thead>
+                        <tr>
+                            <th>Repuesto</th>
+                            <th>Cant.</th>
+                            <th>P. Unit.</th>
+                            <th>Subtotal</th>
+                            <th>Garantía</th>
+                            <th>Estado</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tbodyRepuestosAgregados">
+                        <tr>
+                            <td colspan="6" style="text-align:center; color:#999;">
+                                Aún no has agregado repuestos.
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Mano de obra + garantía del servicio -->
+            <label for="manoDeObra">Mano de obra (COP)</label>
+            <input type="number" id="manoDeObra" min="0" step="1000"
+                   placeholder="Ej: 150000" oninput="actualizarResumen()">
+
+            <label for="garantiaServicioDias">Garantía del servicio</label>
+            <select id="garantiaServicioDias">
+                <option value="15">15 días</option>
+                <option value="30">30 días</option>
+                <option value="60">60 días</option>
+                <option value="90" selected>90 días</option>
+                <option value="180">180 días</option>
+            </select>
+            
+            <!-- Diagnostico del servicio -->
+            <label for="diagnostico">🔍 Diagnóstico técnico</label>
+            <textarea id="diagnostico"
+                      placeholder="Ej: Panel LED dañado en la zona superior derecha"></textarea>
+            
+            <!-- Informe tècnico del servicio -->
+            <label for="informe">📝 Informe final del trabajo</label>
+            <textarea id="informe"
+                      placeholder="Ej: Se reemplazó el panel LED y se realizaron pruebas. TV funcional."></textarea>
+
+            <label for="observacionesGarantia">Observaciones de garantía</label>
+            <textarea id="observacionesGarantia"
+                      placeholder="Ej: Solo cubre la falla original reportada"></textarea>
+
+            <!-- Resumen financiero -->
+            <div class="resumen-financiero">
+                <div class="fila">
+                    <span>Mano de obra:</span>
+                    <span id="resumenMano">$0</span>
+                </div>
+                <div class="fila">
+                    <span>Repuestos aprobados:</span>
+                    <span id="resumenRepuestos">$0</span>
+                </div>
+                <div class="fila total">
+                    <span>TOTAL:</span>
+                    <span id="resumenTotal">$0</span>
+                </div>
+            </div>
+
+            <div id="mensajeCompletar"
+                 style="margin-top:12px; font-size:.85rem; text-align:center;"></div>
+
+            <div class="modal-actions">
+                <button type="button" class="btn-cerrar" onclick="cerrarModalCompletar()">Cancelar</button>
+                <button type="button" class="btn-enviar" onclick="enviarCompletar()">
+                    Confirmar y completar
+                </button>
+            </div>
+        </div>
+    </div>
+    
+        <!-- =====================================================
+         SCRIPTS
+         api.js PRIMERO (define fetchConToken)
+         panel-guard.js DESPUÉS
+         ===================================================== -->
+    <script src="/js/api.js"></script>
+    <script src="/js/panel-guard.js"></script>
+
+    <script>
+        // -----------------------------------------
+        // Verificar sesión y rol TECNICO
+        // -----------------------------------------
+        const usuario = protegerPanel("TECNICO");
+        let tecnicoId = null;
+        let citaActual = null;              // para reprogramar
+        let citaCompletarActual = null;     // para completar
+        let repuestosDisponibles = [];      // caché del inventario
+
+        if (usuario) {
+            tecnicoId = usuario.id;
+            document.getElementById("nombre").textContent = usuario.nombre;
+            document.getElementById("nombreUsuario").textContent = usuario.nombre;
+            cargarPendientes();
+            cargarAsignadas();
+        }
+
+        // -----------------------------------------
+        // Cargar citas pendientes (con token)
+        // -----------------------------------------
+        async function cargarPendientes() {
+            try {
+                // ✅ fetchConToken envía el JWT automáticamente
+                const resp = await fetchConToken("/api/citas/estado/PENDIENTE");
+                const citas = await resp.json();
+
+                const tbody = document.getElementById("tbodyPendientes");
+                const sinPendientes = document.getElementById("sinPendientes");
+                tbody.innerHTML = "";
+
+                if (citas.length === 0) {
+                    sinPendientes.style.display = "block";
+                    return;
+                }
+                sinPendientes.style.display = "none";
+
+                citas.forEach(c => {
+                    const tr = document.createElement("tr");
+                    tr.innerHTML = `
+                        <td>${formatearFecha(c.fecha)}</td>
+                        <td>${c.hora}</td>
+                        <td>${c.clienteNombre || "Cliente #" + c.clienteId}</td>
+                        <td>${c.clienteTelefono || "—"}</td>
+                        <td>${c.direccionVisita}</td>
+                        <td>${c.descripcion || "—"}</td>
+                        <td>
+                            <button class="btn-accion btn-aceptar"
+                                    onclick="aceptarCita(${c.id})">
+                                <i class="fa-solid fa-check"></i> Aceptar
+                            </button>
+                            <button class="btn-accion btn-reprogramar"
+                                    onclick="abrirModal(${c.id}, '${formatearFecha(c.fecha)} ${c.hora}')">
+                                <i class="fa-solid fa-clock-rotate-left"></i> Proponer otra hora
+                            </button>
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            } catch (err) {
+                console.error("Error al cargar pendientes:", err);
+            }
+        }
+
+        // -----------------------------------------
+        // Cargar citas asignadas al técnico (con token)
+        // -----------------------------------------
+        async function cargarAsignadas() {
+            try {
+                // ✅ fetchConToken
+                const resp = await fetchConToken(`/api/citas/tecnico/${tecnicoId}`);
+                const citas = await resp.json();
+
+                const tbody = document.getElementById("tbodyAsignadas");
+                const sinAsignadas = document.getElementById("sinAsignadas");
+                tbody.innerHTML = "";
+
+                if (citas.length === 0) {
+                    sinAsignadas.style.display = "block";
+                    return;
+                }
+                sinAsignadas.style.display = "none";
+
+                citas.forEach(c => {
+                    let botones = "—";
+                    if (c.estado === "ASIGNADA") {
+                        botones = `
+                            <button class="btn-accion btn-iniciar"
+                                    onclick="iniciarCita(${c.id})">
+                                <i class="fa-solid fa-play"></i> Iniciar
+                            </button>
+                        `;
+                    } else if (c.estado === "EN_PROCESO") {
+                        botones = `
+                            <button class="btn-accion btn-completar"
+                                    onclick="abrirModalCompletar(${c.id}, '${c.clienteNombre}')">
+                                <i class="fa-solid fa-check"></i> Completar
+                            </button>
+                            <button class="btn-accion btn-retroceder"
+                                    onclick="cancelarInicio(${c.id})">
+                                <i class="fa-solid fa-rotate-left"></i> Retroceder
+                            </button>
+                        `;
+                    }
+
+                    const tr = document.createElement("tr");
+                    tr.innerHTML = `
+                        <td>${formatearFecha(c.fecha)}</td>
+                        <td>${c.hora}</td>
+                        <td>${c.clienteNombre || "Cliente #" + c.clienteId}</td>
+                        <td>${c.clienteTelefono || "—"}</td>
+                        <td>${c.direccionVisita}</td>
+                        <td><span class="estado-tag estado-${c.estado}">${c.estado}</span></td>
+                        <td>${botones}</td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            } catch (err) {
+                console.error("Error al cargar asignadas:", err);
+            }
+        }
+
+        // -----------------------------------------
+        // Aceptar / Iniciar / Retroceder
+        // -----------------------------------------
+        async function aceptarCita(citaId) {
+            if (!confirm("¿Aceptar esta cita en la hora original?")) return;
+            // ✅ fetchConToken
+            const resp = await fetchConToken(`/api/citas/${citaId}/aprobar/${tecnicoId}`, { method: "PUT" });
+            if (!resp.ok) { alert(await resp.text()); return; }
+            cargarPendientes();
+            cargarAsignadas();
+        }
+
+        async function iniciarCita(citaId) {
+            if (!confirm("¿Marcar esta cita como EN_PROCESO?")) return;
+            // ✅ fetchConToken
+            const resp = await fetchConToken(`/api/citas/${citaId}/iniciar/${tecnicoId}`, { method: "PUT" });
+            if (!resp.ok) { alert(await resp.text()); return; }
+            cargarAsignadas();
+        }
+
+        async function cancelarInicio(citaId) {
+            if (!confirm("¿Retroceder esta cita a ASIGNADA?")) return;
+            // ✅ fetchConToken
+            const resp = await fetchConToken(`/api/citas/${citaId}/cancelar-inicio/${tecnicoId}`, { method: "PUT" });
+            if (!resp.ok) { alert(await resp.text()); return; }
+            cargarAsignadas();
+        }
+
+        // -----------------------------------------
+        // Modal reprogramar
+        // -----------------------------------------
+        function abrirModal(citaId, textoOriginal) {
+            citaActual = citaId;
+            document.getElementById("citaOriginal").textContent = textoOriginal;
+
+            // Fecha mínima = mañana
+            const manana = new Date();
+            manana.setDate(manana.getDate() + 1);
+            const fechaMin = manana.toISOString().split("T")[0];
+            document.getElementById("fechaPropuesta").min = fechaMin;
+
+            document.getElementById("fechaPropuesta").value = "";
+            document.getElementById("horaPropuesta").value = "";
+            document.getElementById("motivoReprogramacion").value = "";
+            document.getElementById("mensajeReprogramar").textContent = "";
+            document.getElementById("modalReprogramar").classList.add("active");
+        }
+
+        function cerrarModal() {
+            document.getElementById("modalReprogramar").classList.remove("active");
+        }
+
+        async function enviarReprogramacion() {
+            const fechaPropuesta = document.getElementById("fechaPropuesta").value;
+            const horaInput = document.getElementById("horaPropuesta").value;
+            const motivo = document.getElementById("motivoReprogramacion").value.trim();
+            const msg = document.getElementById("mensajeReprogramar");
+
+            // Normalizar hora a HH:mm:00
+            const horaPropuesta = horaInput.length === 5 ? horaInput + ":00" : horaInput;
+
+            if (!fechaPropuesta || !horaInput) {
+                msg.style.color = "#C0392B";
+                msg.textContent = "Debes indicar la nueva fecha y hora.";
+                return;
+            }
+
+            // Validar que la nueva fecha no sea pasada
+            const hoy = new Date().toISOString().split("T")[0];
+            if (fechaPropuesta < hoy) {
+                msg.style.color = "#C0392B";
+                msg.textContent = "La nueva fecha no puede ser anterior a hoy.";
+                return;
+            }
+
+            const body = {
+                tecnicoId: tecnicoId,
+                fechaPropuesta: fechaPropuesta,
+                horaPropuesta: horaPropuesta,
+                motivoReprogramacion: motivo || "Sin especificar"
+            };
+
+            msg.style.color = "#666";
+            msg.textContent = "Enviando...";
+
+            try {
+                // ✅ fetchConToken
+                const resp = await fetchConToken(`/api/citas/${citaActual}/reprogramar`, {
+                    method: "PUT",
+                    body: JSON.stringify(body)
+                });
+                if (!resp.ok) {
+                    msg.style.color = "#C0392B";
+                    msg.textContent = (await resp.text()) || "No se pudo enviar.";
+                    return;
+                }
+                msg.style.color = "#16a34a";
+                msg.textContent = "✅ Propuesta enviada.";
+                setTimeout(() => {
+                    cerrarModal();
+                    cargarPendientes();
+                    cargarAsignadas();
+                }, 1200);
+            } catch (err) {
+                msg.style.color = "#C0392B";
+                msg.textContent = "Error de conexión.";
+            }
+        }
+
+        // -----------------------------------------
+        // Modal completar cita
+        // -----------------------------------------
+        async function abrirModalCompletar(citaId, clienteNombre) {
+            citaCompletarActual = citaId;
+
+            document.getElementById("citaCompletarId").textContent = citaId;
+            document.getElementById("clienteCompletar").textContent = clienteNombre || "—";
+            document.getElementById("manoDeObra").value = "";
+            document.getElementById("garantiaServicioDias").value = "90";
+            document.getElementById("observacionesGarantia").value = "";
+            document.getElementById("mensajeCompletar").textContent = "";
+
+            document.getElementById("cantidadInv").value = 1;
+            document.getElementById("nombreManual").value = "";
+            document.getElementById("precioManual").value = "";
+            document.getElementById("cantidadManual").value = 1;
+            document.querySelector('input[name="garantiaManual"][value="sin"]').checked = true;
+            document.getElementById("divGarantiaOtro").style.display = "none";
+
+            cambiarTabRepuesto("inventario");
+
+            document.getElementById("modalCompletar").classList.add("active");
+
+            await cargarRepuestosDisponibles();
+            await cargarRepuestosDeCita(citaId);
+            actualizarResumen();
+        }
+
+        function cerrarModalCompletar() {
+            document.getElementById("modalCompletar").classList.remove("active");
+        }
+
+        // -----------------------------------------
+        // Cargar repuestos disponibles
+        // -----------------------------------------
+        async function cargarRepuestosDisponibles() {
+            try {
+                // ✅ fetchConToken
+                const resp = await fetchConToken("/api/repuestos/estado/DISPONIBLE");
+                repuestosDisponibles = await resp.json();
+
+                const select = document.getElementById("repuestoSelect");
+                select.innerHTML = '<option value="">-- Selecciona un repuesto --</option>';
+
+                repuestosDisponibles.forEach(r => {
+                    const opt = document.createElement("option");
+                    opt.value = r.id;
+                    opt.textContent = `${r.nombre} — $${r.precio.toLocaleString("es-CO")}`;
+                    select.appendChild(opt);
+                });
+            } catch (err) {
+                console.error("Error al cargar repuestos:", err);
+            }
+        }
+
+        // -----------------------------------------
+        // Cargar repuestos de una cita
+        // -----------------------------------------
+        async function cargarRepuestosDeCita(citaId) {
+            try {
+                // ✅ fetchConToken
+                const resp = await fetchConToken(`/api/citas/${citaId}/repuestos`);
+                const repuestos = await resp.json();
+                pintarTablaRepuestos(repuestos);
+            } catch (err) {
+                console.error("Error al cargar repuestos de la cita:", err);
+            }
+        }
+
+        // -----------------------------------------
+        // Pintar tabla de repuestos
+        // -----------------------------------------
+        function pintarTablaRepuestos(repuestos) {
+            const tbody = document.getElementById("tbodyRepuestosAgregados");
+            tbody.innerHTML = "";
+
+            if (repuestos.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="6" style="text-align:center; color:#999;">
+                            Aún no has agregado repuestos.
+                        </td>
+                    </tr>`;
+                actualizarResumen();
+                return;
+            }
+
+            repuestos.forEach(r => {
+                // Nombre: manual o del inventario
+                let nombre = r.nombreManual;
+                if (!nombre && r.repuestoId) {
+                    const delInventario = repuestosDisponibles.find(x => x.id === r.repuestoId);
+                    nombre = delInventario ? delInventario.nombre : `Repuesto #${r.repuestoId}`;
+                }
+
+                const tr = document.createElement("tr");
+                tr.innerHTML = `
+                    <td>${nombre || "—"}</td>
+                    <td>${r.cantidad}</td>
+                    <td>$${r.precioUnitario.toLocaleString("es-CO")}</td>
+                    <td>$${r.subtotal.toLocaleString("es-CO")}</td>
+                    <td>${textoGarantia(r)}</td>
+                    <td><span class="rep-tag rep-${r.estado}">${r.estado}</span></td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            actualizarResumen();
+        }
+
+        // -----------------------------------------
+        // Texto de garantía
+        // -----------------------------------------
+        function textoGarantia(r) {
+            if (!r.repuestoId) {
+                if (r.llevaGarantiaManual && r.garantiaDiasManual) {
+                    return `<span style="color:#16a34a;font-weight:600;">✅ ${r.garantiaDiasManual} días</span>`;
+                }
+                return `<span style="color:#dc2626;font-weight:600;">❌ Sin garantía</span>`;
+            }
+            const rep = repuestosDisponibles.find(x => x.id === r.repuestoId);
+            if (rep && rep.llevaGarantia && rep.garantiaDias) {
+                return `<span style="color:#16a34a;font-weight:600;">✅ ${rep.garantiaDias} días</span>`;
+            }
+            return `<span style="color:#dc2626;font-weight:600;">❌ Sin garantía</span>`;
+        }
+
+        // -----------------------------------------
+        // Agregar repuesto del inventario
+        // -----------------------------------------
+        async function agregarRepuestoInventario() {
+            const repuestoId = document.getElementById("repuestoSelect").value;
+            const cantidad = parseInt(document.getElementById("cantidadInv").value);
+
+            if (!repuestoId || cantidad <= 0) {
+                alert("Selecciona un repuesto y una cantidad válida.");
+                return;
+            }
+
+            const body = {
+                tecnicoId: tecnicoId,
+                repuestoId: parseInt(repuestoId),
+                cantidad: cantidad
+            };
+
+            try {
+                // ✅ fetchConToken
+                const resp = await fetchConToken(`/api/citas/${citaCompletarActual}/repuestos`, {
+                    method: "POST",
+                    body: JSON.stringify(body)
+                });
+                if (!resp.ok) {
+                    alert(await resp.text());
+                    return;
+                }
+                await cargarRepuestosDeCita(citaCompletarActual);
+                document.getElementById("cantidadInv").value = 1;
+            } catch (err) {
+                alert("Error al agregar el repuesto.");
+                console.error(err);
+            }
+        }
+
+        // -----------------------------------------
+        // Agregar repuesto manual
+        // -----------------------------------------
+        async function agregarRepuestoManual() {
+            const nombre = document.getElementById("nombreManual").value.trim();
+            const precio = parseFloat(document.getElementById("precioManual").value);
+            const cantidad = parseInt(document.getElementById("cantidadManual").value);
+
+            const seleccionGarantia = document.querySelector('input[name="garantiaManual"]:checked').value;
+
+            let llevaGarantia = false;
+            let diasGarantia = null;
+
+            if (seleccionGarantia === "sin") {
+                llevaGarantia = false;
+                diasGarantia = null;
+            } else if (seleccionGarantia === "otro") {
+                llevaGarantia = true;
+                diasGarantia = parseInt(document.getElementById("diasGarantiaManual").value);
+                if (!diasGarantia || diasGarantia <= 0) {
+                    alert("Debes indicar los días de garantía personalizados.");
+                    return;
+                }
+            } else {
+                llevaGarantia = true;
+                diasGarantia = parseInt(seleccionGarantia);
+            }
+
+            if (!nombre || !precio || precio <= 0 || cantidad <= 0) {
+                alert("Completa nombre, precio y cantidad válidos.");
+                return;
+            }
+
+            const body = {
+                tecnicoId: tecnicoId,
+                nombre: nombre,
+                precioUnitario: precio,
+                cantidad: cantidad,
+                llevaGarantia: llevaGarantia,
+                garantiaDias: diasGarantia
+            };
+
+            try {
+                // ✅ fetchConToken
+                const resp = await fetchConToken(`/api/citas/${citaCompletarActual}/repuestos-manual`, {
+                    method: "POST",
+                    body: JSON.stringify(body)
+                });
+                if (!resp.ok) {
+                    alert(await resp.text());
+                    return;
+                }
+                await cargarRepuestosDeCita(citaCompletarActual);
+
+                document.getElementById("nombreManual").value = "";
+                document.getElementById("precioManual").value = "";
+                document.getElementById("cantidadManual").value = 1;
+                document.querySelector('input[name="garantiaManual"][value="sin"]').checked = true;
+                document.getElementById("divGarantiaOtro").style.display = "none";
+            } catch (err) {
+                alert("Error al agregar el repuesto manual.");
+                console.error(err);
+            }
+        }
+
+        // -----------------------------------------
+        // Cambiar pestaña inventario / manual
+        // -----------------------------------------
+        function cambiarTabRepuesto(tipo) {
+            const tabInv = document.getElementById("tabInventario");
+            const tabMan = document.getElementById("tabManual");
+            const formInv = document.getElementById("formInventario");
+            const formMan = document.getElementById("formManual");
+
+            if (tipo === "inventario") {
+                tabInv.classList.add("active");
+                tabMan.classList.remove("active");
+                formInv.style.display = "grid";
+                formMan.style.display = "none";
+            } else {
+                tabInv.classList.remove("active");
+                tabMan.classList.add("active");
+                formInv.style.display = "none";
+                formMan.style.display = "grid";
+            }
+        }
+
+        // -----------------------------------------
+        // Mostrar / ocultar campo "Otro" garantía
+        // -----------------------------------------
+        function actualizarGarantiaManual() {
+            const seleccion = document.querySelector('input[name="garantiaManual"]:checked').value;
+            const divOtro = document.getElementById("divGarantiaOtro");
+            divOtro.style.display = (seleccion === "otro") ? "block" : "none";
+        }
+
+        // -----------------------------------------
+        // Actualizar resumen financiero
+        // -----------------------------------------
+        function actualizarResumen() {
+            const mano = parseFloat(document.getElementById("manoDeObra").value) || 0;
+
+            const filas = document.querySelectorAll("#tbodyRepuestosAgregados tr");
+            let totalRepuestos = 0;
+
+            filas.forEach(fila => {
+                const celdas = fila.querySelectorAll("td");
+                if (celdas.length >= 6) {
+                    const estado = celdas[5].textContent.trim();
+                    if (estado === "APROBADO") {
+                        const subtotalTexto = celdas[3].textContent.replace(/[$.]/g, "");
+                        totalRepuestos += parseFloat(subtotalTexto) || 0;
+                    }
+                }
+            });
+
+            const total = mano + totalRepuestos;
+
+            document.getElementById("resumenMano").textContent = "$" + mano.toLocaleString("es-CO");
+            document.getElementById("resumenRepuestos").textContent = "$" + totalRepuestos.toLocaleString("es-CO");
+            document.getElementById("resumenTotal").textContent = "$" + total.toLocaleString("es-CO");
+        }
+
+        // -----------------------------------------
+        // Enviar completar cita
+        // -----------------------------------------
+                async function enviarCompletar() {
+            const manoDeObra = document.getElementById("manoDeObra").value;
+            const garantia = document.getElementById("garantiaServicioDias").value;
+            const observaciones = document.getElementById("observacionesGarantia").value.trim();
+            const diagnostico = document.getElementById("diagnostico").value.trim();
+            const informe = document.getElementById("informe").value.trim();
+            const msg = document.getElementById("mensajeCompletar");
+
+            if (!manoDeObra || parseFloat(manoDeObra) < 0) {
+                msg.style.color = "#C0392B";
+                msg.textContent = "Debes ingresar la mano de obra.";
+                return;
+            }
+
+            const body = {
+                tecnicoId: tecnicoId,
+                manoDeObra: parseFloat(manoDeObra),
+                garantiaServicioDias: parseInt(garantia),
+                observacionesGarantia: observaciones || "Sin observaciones",
+                diagnostico: diagnostico || "Sin diagnóstico",
+                informe: informe || "Sin informe"
+            };
+
+            msg.style.color = "#666";
+            msg.textContent = "Guardando...";
+
+            try {
+                // ✅ fetchConToken
+                const resp = await fetchConToken(`/api/citas/${citaCompletarActual}/completar`, {
+                    method: "PUT",
+                    body: JSON.stringify(body)
+                });
+                if (!resp.ok) {
+                    msg.style.color = "#C0392B";
+                    msg.textContent = (await resp.text()) || "No se pudo completar.";
+                    return;
+                }
+                msg.style.color = "#16a34a";
+                msg.textContent = "✅ Cita completada correctamente.";
+                setTimeout(() => {
+                    cerrarModalCompletar();
+                    cargarAsignadas();
+                }, 1200);
+            } catch (err) {
+                msg.style.color = "#C0392B";
+                msg.textContent = "Error de conexión.";
+            }
+        }
+
+        // -----------------------------------------
+        // Utilidad: formatear fecha yyyy-mm-dd → dd/mm/yyyy
+        // -----------------------------------------
+        function formatearFecha(fecha) {
+            if (!fecha) return "—";
+            const [y, m, d] = fecha.split("-");
+            return `${d}/${m}/${y}`;
+        }
+    </script>
+
+</body>
+</html>
+
+

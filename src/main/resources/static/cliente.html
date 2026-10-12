@@ -1,0 +1,881 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel Cliente | Motato Electronics</title>
+
+    <!-- Estilos globales -->
+    <link rel="stylesheet" href="/css/style.css">
+
+    <!-- Iconos FontAwesome -->
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+
+    <style>
+        /* =====================================================
+           MODALES
+           ===================================================== */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,.5);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-overlay.active { display: flex; }
+
+        .modal-content {
+            background: #fff;
+            padding: 30px;
+            border-radius: var(--radius-lg);
+            width: 90%;
+            max-width: 600px;
+            box-shadow: var(--shadow-lg);
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        .modal-content h2 {
+            color: var(--dark);
+            margin-bottom: 20px;
+            font-size: 1.4rem;
+        }
+        .modal-content label {
+            display: block;
+            font-size: .85rem;
+            color: #333;
+            margin-top: 14px;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+        .modal-content input,
+        .modal-content textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: .95rem;
+            font-family: inherit;
+            box-sizing: border-box;
+        }
+        .modal-content textarea { resize: vertical; min-height: 80px; }
+        .modal-content input:focus,
+        .modal-content textarea:focus {
+            outline: none;
+            border: 2px solid var(--primary);
+        }
+
+        /* Botones del modal */
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 25px;
+        }
+        .modal-actions button {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: .95rem;
+            font-weight: 600;
+        }
+        .btn-cerrar { background: #e5e7eb; color: #333; }
+        .btn-cerrar:hover { background: #d1d5db; }
+        .btn-guardar { background: var(--dark); color: #fff; }
+        .btn-guardar:hover { background: var(--primary); }
+        .btn-pagar { background: var(--success); color: #fff; }
+        .btn-pagar:hover { background: #1e8449; }
+
+        .btn-nueva-cita {
+            background: var(--success);
+            color: #fff;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            margin-top: 20px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .btn-nueva-cita:hover { background: #1e8449; }
+
+        .btn-accion {
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: .72rem;
+            font-weight: 600;
+            margin-right: 4px;
+            color: #fff;
+        }
+        .btn-cancelar-cita { background: var(--danger); }
+        .btn-aceptar { background: var(--success); }
+        .btn-rechazar { background: var(--danger); }
+        .btn-ver { background: var(--dark); }
+        .btn-pagar-cita { background: #16a34a; }
+
+        /* Etiquetas de estado */
+        .estado-tag {
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: .72rem;
+            color: #fff;
+            display: inline-block;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+        .estado-PENDIENTE                { background: #f59e0b; }
+        .estado-REPROGRAMACION_PENDIENTE { background: #8b5cf6; }
+        .estado-ASIGNADA                 { background: #3b82f6; }
+        .estado-EN_PROCESO               { background: #f97316; }
+        .estado-COMPLETADA               { background: #16a34a; }
+        .estado-CANCELADA                { background: #6b7280; }
+
+        .sin-citas {
+            text-align: center;
+            padding: 40px;
+            color: var(--muted);
+        }
+        .propuesta-info {
+            background: #f3e8ff;
+            border-left: 3px solid #8b5cf6;
+            padding: 6px 10px;
+            border-radius: 4px;
+            font-size: .78rem;
+            margin-top: 6px;
+            color: #5b21b6;
+        }
+
+        /* Filas del modal de detalle */
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+            font-size: .9rem;
+        }
+        .info-row.total {
+            border-top: 2px solid var(--dark);
+            border-bottom: none;
+            margin-top: 8px;
+            padding-top: 12px;
+            font-size: 1.05rem;
+            font-weight: bold;
+            color: var(--dark);
+        }
+        .info-label { color: #666; }
+        .info-value { color: #111; font-weight: 600; }
+
+        /* Métodos de pago */
+        .metodo-pago {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .metodo-pago label {
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            padding: 14px 10px;
+            text-align: center;
+            cursor: pointer;
+            font-weight: 600;
+            color: #333;
+            transition: .2s;
+            margin: 0;
+            font-size: .9rem;
+        }
+        .metodo-pago input[type="radio"] { display: none; }
+        .metodo-pago label:has(input:checked) {
+            border-color: var(--primary);
+            background: #eff6ff;
+            color: var(--primary);
+        }
+        .pago-info {
+            background: #dcfce7;
+            color: #166534;
+            padding: 12px;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: 600;
+            margin-top: 15px;
+            font-size: 1.05rem;
+        }
+
+        /* Tabla de repuestos */
+        .repuestos-cliente {
+            margin-top: 15px;
+            background: #f9fafb;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 12px;
+        }
+        .repuestos-cliente h4 {
+            color: var(--dark);
+            margin: 0 0 10px 0;
+            font-size: .95rem;
+        }
+        .repuestos-cliente table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: .82rem;
+            background: #fff;
+            border-radius: 6px;
+            overflow: hidden;
+        }
+        .repuestos-cliente th,
+        .repuestos-cliente td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+        .repuestos-cliente th {
+            background: #f3f4f6;
+            color: var(--dark);
+            font-weight: 600;
+        }
+        .rep-tag {
+            padding: 3px 8px;
+            border-radius: 10px;
+            font-size: .7rem;
+            color: #fff;
+            display: inline-block;
+            font-weight: 600;
+        }
+        .rep-PENDIENTE { background: #f59e0b; }
+        .rep-APROBADO  { background: #16a34a; }
+        .rep-RECHAZADO { background: #dc2626; }
+        .btn-mini {
+            border: none;
+            padding: 4px 8px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: .7rem;
+            font-weight: 600;
+            color: #fff;
+            margin-right: 3px;
+        }
+        .btn-mini-ok  { background: var(--success); }
+        .btn-mini-no  { background: var(--danger); }
+        .btn-mini:hover { opacity: .85; }
+    </style>
+</head>
+<body>
+
+    <!-- =====================================================
+         CABECERA
+         ===================================================== -->
+    <header class="panel-header" style="background:#1e3a8a;">
+        <h1>Motato Electronics — Panel Cliente</h1>
+        <div class="user">
+            <span id="nombreUsuario"></span>
+            <button onclick="cerrarSesion()">Cerrar sesión</button>
+        </div>
+    </header>
+
+    <!-- =====================================================
+         CONTENIDO PRINCIPAL
+         ===================================================== -->
+    <main class="panel-main">
+
+        <div class="panel-bienvenida">
+            <h2>Hola, <span id="nombre"></span> 👋</h2>
+            <p>Desde aquí podrás solicitar servicios, ver tus citas, aprobar repuestos y pagar tus reparaciones.</p>
+        </div>
+
+        <div style="margin-top:25px;">
+            <button class="btn-nueva-cita" onclick="abrirModal()">
+                <i class="fa-solid fa-plus"></i> Solicitar nueva cita
+            </button>
+        </div>
+
+        <h2 style="margin-top:40px; color:var(--dark);">Mis citas</h2>
+        <table class="tabla-panel" id="tablaCitas">
+            <thead>
+                <tr>
+                    <th>Fecha</th>
+                    <th>Hora</th>
+                    <th>Dirección</th>
+                    <th>Teléfono</th>
+                    <th>Descripción</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody id="tbodyCitas"></tbody>
+        </table>
+        <div id="sinCitas" class="sin-citas" style="display:none;">
+            No tienes citas registradas todavía.
+        </div>
+
+    </main>
+
+    <!-- =====================================================
+         MODAL: Nueva cita
+         ===================================================== -->
+    <div class="modal-overlay" id="modalCita">
+        <div class="modal-content">
+            <h2><i class="fa-solid fa-calendar-plus"></i> Solicitar nueva cita</h2>
+
+            <label for="fecha">Fecha de la visita</label>
+            <input type="date" id="fecha" required>
+
+            <label for="hora">Hora de la visita</label>
+            <input type="time" id="hora" step="60" required>
+
+            <label for="direccion">Dirección de la visita</label>
+            <input type="text" id="direccion"
+                   placeholder="Ej: Calle 10 #20-30, Medellín" required>
+
+            <label for="descripcion">Descripción del problema</label>
+            <textarea id="descripcion"
+                      placeholder="Describe qué falla tiene tu TV..."></textarea>
+
+            <div id="mensajeCita"
+                 style="margin-top:12px; font-size:.85rem; text-align:center;"></div>
+
+            <div class="modal-actions">
+                <button type="button" class="btn-cerrar" onclick="cerrarModal()">Cancelar</button>
+                <button type="button" class="btn-guardar" onclick="guardarCita()">Guardar cita</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- =====================================================
+         MODAL: Detalle de cita
+         ===================================================== -->
+    <div class="modal-overlay" id="modalDetalle">
+        <div class="modal-content">
+            <h2><i class="fa-solid fa-receipt"></i> Detalle de la cita #<span id="detalleId"></span></h2>
+
+            <div class="info-row">
+                <span class="info-label">📅 Fecha:</span>
+                <span class="info-value" id="detalleFecha"></span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">🔧 Técnico:</span>
+                <span class="info-value" id="detalleTecnico"></span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">📍 Dirección:</span>
+                <span class="info-value" id="detalleDireccion"></span>
+            </div>
+
+            <div id="seccionRepuestos" class="repuestos-cliente" style="display:none;">
+                <h4>🔧 Repuestos sugeridos por el técnico</h4>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Repuesto</th>
+                            <th>Cant.</th>
+                            <th>P. Unit.</th>
+                            <th>Subtotal</th>
+                            <th>Estado</th>
+                            <th>Acción</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tbodyRepuestosCliente"></tbody>
+                </table>
+            </div>
+
+            <h3 style="margin-top:22px; color:var(--dark); font-size:1rem;">💰 Desglose financiero</h3>
+            <div class="info-row">
+                <span class="info-label">Mano de obra:</span>
+                <span class="info-value" id="detalleMano"></span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Repuestos aprobados:</span>
+                <span class="info-value" id="detalleRepuestos"></span>
+            </div>
+            <div class="info-row total">
+                <span>TOTAL:</span>
+                <span id="detalleTotal"></span>
+            </div>
+
+            <h3 style="margin-top:22px; color:var(--dark); font-size:1rem;">🛡️ Garantía del servicio</h3>
+            <div class="info-row">
+                <span class="info-label">Vigencia:</span>
+                <span class="info-value" id="detalleGarantiaDias"></span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Vence el:</span>
+                <span class="info-value" id="detalleGarantiaFecha"></span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Observaciones:</span>
+                <span class="info-value" id="detalleGarantiaObs"></span>
+            </div>
+
+            <div id="pagoEstado" style="margin-top:18px;"></div>
+
+            <div class="modal-actions">
+                <button type="button" class="btn-cerrar" onclick="cerrarDetalle()">Cerrar</button>
+                <button type="button" class="btn-pagar" id="btnPagarDetalle" onclick="abrirModalPago()">
+                    <i class="fa-solid fa-credit-card"></i> Pagar ahora
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- =====================================================
+         MODAL: Pago
+         ===================================================== -->
+    <div class="modal-overlay" id="modalPago">
+        <div class="modal-content">
+            <h2><i class="fa-solid fa-credit-card"></i> Selecciona el método de pago</h2>
+
+            <div class="metodo-pago">
+                <label>
+                    <input type="radio" name="metodo" value="EFECTIVO" checked>
+                    💵 Efectivo
+                </label>
+                <label>
+                    <input type="radio" name="metodo" value="NEQUI">
+                    📱 Nequi
+                </label>
+                <label>
+                    <input type="radio" name="metodo" value="TARJETA">
+                    💳 Tarjeta
+                </label>
+                <label>
+                    <input type="radio" name="metodo" value="PSE">
+                    🏦 PSE
+                </label>
+            </div>
+
+            <div class="pago-info">
+                Total a pagar: <span id="pagoTotal"></span>
+            </div>
+
+            <p id="avisoEfectivo"
+               style="font-size:.85rem; color:#92400e; background:#fef3c7; 
+                      padding:10px; border-radius:8px; margin-top:10px; display:block;">
+                💡 Recuerda tener el efectivo listo. El técnico lo recibirá al llegar.
+            </p>
+
+            <div id="mensajePago"
+                 style="margin-top:12px; font-size:.85rem; text-align:center;"></div>
+
+            <div class="modal-actions">
+                <button type="button" class="btn-cerrar" onclick="cerrarModalPago()">Cancelar</button>
+                <button type="button" class="btn-pagar" onclick="confirmarPago()">
+                    Confirmar pago
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- =====================================================
+         SCRIPTS
+         api.js PRIMERO (define fetchConToken)
+         panel-guard.js DESPUÉS (usa fetchConToken)
+         ===================================================== -->
+    <script src="/js/api.js"></script>
+    <script src="/js/panel-guard.js"></script>
+    <script>
+        // -----------------------------------------
+        // Verificar sesión
+        // -----------------------------------------
+        const usuario = protegerPanel("CLIENTE");
+        let clienteId = null;
+        let citaDetalleActual = null;
+
+        if (usuario) {
+            clienteId = usuario.id;
+            document.getElementById("nombre").textContent = usuario.nombre;
+            document.getElementById("nombreUsuario").textContent = usuario.nombre;
+            cargarCitas();
+        }
+
+        // -----------------------------------------
+        // Abrir modal de nueva cita
+        // -----------------------------------------
+        function abrirModal() {
+            document.getElementById("modalCita").classList.add("active");
+
+            // 🔒 Poner la fecha mínima = HOY (bloquea fechas pasadas)
+            const hoy = new Date().toISOString().split("T")[0];
+            document.getElementById("fecha").min = hoy;
+
+            // Limpiar campos
+            document.getElementById("fecha").value = "";
+            document.getElementById("hora").value = "";
+            document.getElementById("direccion").value = "";
+            document.getElementById("descripcion").value = "";
+            document.getElementById("mensajeCita").textContent = "";
+        }
+
+        function cerrarModal() {
+            document.getElementById("modalCita").classList.remove("active");
+        }
+
+        // -----------------------------------------
+        // Guardar cita
+        // -----------------------------------------
+        async function guardarCita() {
+            const fecha = document.getElementById("fecha").value;
+            const horaInput = document.getElementById("hora").value;
+            const direccion = document.getElementById("direccion").value.trim();
+            const descripcion = document.getElementById("descripcion").value.trim();
+            const msg = document.getElementById("mensajeCita");
+
+            const hora = horaInput.length === 5 ? horaInput + ":00" : horaInput;
+
+            if (!fecha || !horaInput || !direccion) {
+                msg.style.color = "#C0392B";
+                msg.textContent = "Completa fecha, hora y dirección.";
+                return;
+            }
+
+            // Validar que la fecha no sea pasada
+            const hoy = new Date().toISOString().split("T")[0];
+            if (fecha < hoy) {
+                msg.style.color = "#C0392B";
+                msg.textContent = "No puedes agendar citas en fechas pasadas.";
+                return;
+            }
+
+            const cita = {
+                clienteId: clienteId,
+                fecha: fecha,
+                hora: hora,
+                direccionVisita: direccion,
+                descripcion: descripcion
+            };
+
+            msg.style.color = "#666";
+            msg.textContent = "Enviando...";
+
+            try {
+                // 🔒 fetchConToken en lugar de fetch
+                const resp = await fetchConToken("/api/citas", {
+                    method: "POST",
+                    body: JSON.stringify(cita)
+                });
+                if (!resp.ok) {
+                    msg.style.color = "#C0392B";
+                    msg.textContent = (await resp.text()) || "No se pudo crear la cita.";
+                    return;
+                }
+                msg.style.color = "#16a34a";
+                msg.textContent = "✅ Cita creada correctamente.";
+                setTimeout(() => {
+                    cerrarModal();
+                    cargarCitas();
+                }, 800);
+            } catch (err) {
+                msg.style.color = "#C0392B";
+                msg.textContent = "Error de conexión.";
+            }
+        }
+
+        // -----------------------------------------
+        // Cargar citas
+        // -----------------------------------------
+        async function cargarCitas() {
+            try {
+                // 🔒 fetchConToken
+                const resp = await fetchConToken(`/api/citas/cliente/${clienteId}`);
+                const citas = await resp.json();
+
+                const tbody = document.getElementById("tbodyCitas");
+                const sinCitas = document.getElementById("sinCitas");
+                tbody.innerHTML = "";
+
+                if (citas.length === 0) {
+                    sinCitas.style.display = "block";
+                    return;
+                }
+                sinCitas.style.display = "none";
+
+                citas.forEach(c => {
+                    let infoPropuesta = "";
+                    if (c.estado === "REPROGRAMACION_PENDIENTE") {
+                        infoPropuesta = `
+                            <div class="propuesta-info">
+                                <b>Nueva propuesta:</b>
+                                ${formatearFecha(c.fechaPropuesta)} a las ${c.horaPropuesta}
+                                <br><i>Motivo:</i> ${c.motivoReprogramacion || "—"}
+                            </div>`;
+                    }
+
+                    let botones = "—";
+                    if (c.estado === "PENDIENTE") {
+                        botones = `<button class="btn-accion btn-cancelar-cita"
+                                    onclick="cancelarCita(${c.id})">Cancelar</button>`;
+                    } else if (c.estado === "REPROGRAMACION_PENDIENTE") {
+                        botones = `
+                            <button class="btn-accion btn-aceptar" onclick="aceptarReprogramacion(${c.id})">
+                                <i class="fa-solid fa-check"></i> Aceptar
+                            </button>
+                            <button class="btn-accion btn-rechazar" onclick="rechazarReprogramacion(${c.id})">
+                                <i class="fa-solid fa-xmark"></i> Rechazar
+                            </button>`;
+                    } else if (c.estado === "EN_PROCESO" || c.estado === "COMPLETADA") {
+                        botones = `<button class="btn-accion btn-ver" onclick="verDetalle(${c.id})">
+                                <i class="fa-solid fa-eye"></i> Ver detalle
+                            </button>`;
+                    }
+
+                    const tr = document.createElement("tr");
+                    tr.innerHTML = `
+                        <td>${formatearFecha(c.fecha)}</td>
+                        <td>${c.hora}</td>
+                        <td>${c.direccionVisita}</td>
+                        <td>${c.clienteTelefono || "—"}</td>
+                        <td>${c.descripcion || "—"}${infoPropuesta}</td>
+                        <td>
+                            <span class="estado-tag estado-${c.estado}">${c.estado}</span>
+                            ${c.pagado ? '<br><small style="color:#16a34a;font-weight:bold;">✅ Pagado</small>' : ''}
+                        </td>
+                        <td>${botones}</td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            } catch (err) {
+                console.error("Error al cargar citas:", err);
+            }
+        }
+
+        // -----------------------------------------
+        // Ver detalle
+        // -----------------------------------------
+        async function verDetalle(id) {
+            try {
+                // 🔒 fetchConToken
+                const resp = await fetchConToken(`/api/citas/${id}`);
+                const c = await resp.json();
+                citaDetalleActual = c;
+
+                document.getElementById("detalleId").textContent = c.id;
+                document.getElementById("detalleFecha").textContent =
+                    formatearFecha(c.fecha) + " " + (c.hora || "");
+                document.getElementById("detalleTecnico").textContent =
+                    c.tecnicoNombre || "Sin asignar";
+                document.getElementById("detalleDireccion").textContent = c.direccionVisita;
+
+                document.getElementById("detalleMano").textContent =
+                    "$" + (c.manoDeObra || 0).toLocaleString("es-CO");
+                document.getElementById("detalleRepuestos").textContent =
+                    "$" + (c.totalRepuestos || 0).toLocaleString("es-CO");
+                document.getElementById("detalleTotal").textContent =
+                    "$" + (c.total || 0).toLocaleString("es-CO");
+
+                document.getElementById("detalleGarantiaDias").textContent =
+                    (c.garantiaServicioDias || 0) + " días";
+                document.getElementById("detalleGarantiaFecha").textContent =
+                    formatearFecha(c.fechaFinGarantia);
+                document.getElementById("detalleGarantiaObs").textContent =
+                    c.observacionesGarantia || "—";
+
+                const pagoEstado = document.getElementById("pagoEstado");
+                const btnPagar = document.getElementById("btnPagarDetalle");
+                if (c.pagado) {
+                    pagoEstado.innerHTML = `<div class="pago-info">✅ Cita pagada</div>`;
+                    btnPagar.style.display = "none";
+                } else if (c.estado === "COMPLETADA") {
+                    pagoEstado.innerHTML = `<div style="background:#fee2e2;color:#991b1b;padding:10px;border-radius:8px;text-align:center;font-weight:600;">❌ Pago pendiente</div>`;
+                    btnPagar.style.display = "block";
+                } else {
+                    pagoEstado.innerHTML = "";
+                    btnPagar.style.display = "none";
+                }
+
+                await cargarRepuestosCliente(id);
+
+                document.getElementById("modalDetalle").classList.add("active");
+            } catch (err) {
+                alert("No se pudo cargar el detalle.");
+                console.error(err);
+            }
+        }
+        function cerrarDetalle() {
+            document.getElementById("modalDetalle").classList.remove("active");
+        }
+
+        // -----------------------------------------
+        // Cargar repuestos de la cita
+        // -----------------------------------------
+        async function cargarRepuestosCliente(citaId) {
+            try {
+                const resp = await fetchConToken(`/api/citas/${citaId}/repuestos`);
+                const repuestos = await resp.json();
+
+                const seccion = document.getElementById("seccionRepuestos");
+                const tbody = document.getElementById("tbodyRepuestosCliente");
+
+                if (repuestos.length === 0) {
+                    seccion.style.display = "none";
+                    return;
+                }
+
+                seccion.style.display = "block";
+                tbody.innerHTML = "";
+
+                const invResp = await fetchConToken("/api/repuestos");
+                const inventario = await invResp.json();
+
+                repuestos.forEach(r => {
+                    let nombre = r.nombreManual;
+                    if (!nombre && r.repuestoId) {
+                        const rep = inventario.find(x => x.id === r.repuestoId);
+                        nombre = rep ? rep.nombre : `Repuesto #${r.repuestoId}`;
+                    }
+
+                    let acciones = `<span class="rep-tag rep-${r.estado}">${r.estado}</span>`;
+                    if (r.estado === "PENDIENTE") {
+                        acciones = `
+                            <button class="btn-mini btn-mini-ok"
+                                    onclick="aprobarRepuesto(${r.id}, ${citaId})">
+                                <i class="fa-solid fa-check"></i> Aprobar
+                            </button>
+                            <button class="btn-mini btn-mini-no"
+                                    onclick="rechazarRepuesto(${r.id}, ${citaId})">
+                                <i class="fa-solid fa-xmark"></i> Rechazar
+                            </button>`;
+                    }
+
+                    const tr = document.createElement("tr");
+                    tr.innerHTML = `
+                        <td>${nombre || "—"}</td>
+                        <td>${r.cantidad}</td>
+                        <td>$${r.precioUnitario.toLocaleString("es-CO")}</td>
+                        <td>$${r.subtotal.toLocaleString("es-CO")}</td>
+                        <td><span class="rep-tag rep-${r.estado}">${r.estado}</span></td>
+                        <td>${acciones}</td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            } catch (err) {
+                console.error("Error al cargar repuestos:", err);
+            }
+        }
+
+        // -----------------------------------------
+        // Aprobar / Rechazar repuesto
+        // -----------------------------------------
+        async function aprobarRepuesto(citaRepuestoId, citaId) {
+            if (!confirm("¿Aprobar este repuesto? Se sumará al total.")) return;
+            try {
+                const resp = await fetchConToken(`/api/citas/repuestos/${citaRepuestoId}/aprobar`, {
+                    method: "PUT"
+                });
+                if (!resp.ok) { alert(await resp.text()); return; }
+                await verDetalle(citaId);
+                cargarCitas();
+            } catch (err) {
+                alert("Error al aprobar el repuesto.");
+            }
+        }
+        async function rechazarRepuesto(citaRepuestoId, citaId) {
+            if (!confirm("¿Rechazar este repuesto? No se sumará al total.")) return;
+            try {
+                const resp = await fetchConToken(`/api/citas/repuestos/${citaRepuestoId}/rechazar`, {
+                    method: "PUT"
+                });
+                if (!resp.ok) { alert(await resp.text()); return; }
+                await verDetalle(citaId);
+                cargarCitas();
+            } catch (err) {
+                alert("Error al rechazar el repuesto.");
+            }
+        }
+
+        // -----------------------------------------
+        // Modal de pago
+        // -----------------------------------------
+        function abrirModalPago() {
+            const c = citaDetalleActual;
+            if (!c) return;
+            document.getElementById("pagoTotal").textContent =
+                "$" + (c.total || 0).toLocaleString("es-CO");
+            document.getElementById("mensajePago").textContent = "";
+            document.getElementById("modalPago").classList.add("active");
+            actualizarAvisoEfectivo();
+        }
+        function cerrarModalPago() {
+            document.getElementById("modalPago").classList.remove("active");
+        }
+        function actualizarAvisoEfectivo() {
+            const metodo = document.querySelector('input[name="metodo"]:checked').value;
+            const aviso = document.getElementById("avisoEfectivo");
+            aviso.style.display = (metodo === "EFECTIVO") ? "block" : "none";
+        }
+        document.querySelectorAll('input[name="metodo"]').forEach(r => {
+            r.addEventListener("change", actualizarAvisoEfectivo);
+        });
+
+        async function confirmarPago() {
+            const c = citaDetalleActual;
+            if (!c) return;
+            const metodo = document.querySelector('input[name="metodo"]:checked').value;
+            const msg = document.getElementById("mensajePago");
+
+            msg.style.color = "#666";
+            msg.textContent = "Procesando pago...";
+
+            try {
+                const resp = await fetchConToken(`/api/citas/${c.id}/pagar`, {
+                    method: "PUT",
+                    body: JSON.stringify({ metodo })
+                });
+                if (!resp.ok) {
+                    msg.style.color = "#C0392B";
+                    msg.textContent = (await resp.text()) || "No se pudo procesar.";
+                    return;
+                }
+                msg.style.color = "#16a34a";
+                msg.textContent = "✅ Pago registrado.";
+                setTimeout(() => {
+                    cerrarModalPago();
+                    cerrarDetalle();
+                    cargarCitas();
+                }, 1200);
+            } catch (err) {
+                msg.style.color = "#C0392B";
+                msg.textContent = "Error de conexión.";
+            }
+        }
+
+        // -----------------------------------------
+        // Cancelar / Aceptar / Rechazar reprogramación
+        // -----------------------------------------
+        async function cancelarCita(id) {
+            if (!confirm("¿Cancelar esta cita?")) return;
+            const resp = await fetchConToken(`/api/citas/${id}/cancelar`, { method: "PUT" });
+            if (!resp.ok) { alert(await resp.text()); return; }
+            cargarCitas();
+        }
+        async function aceptarReprogramacion(id) {
+            if (!confirm("¿Aceptar la nueva hora?")) return;
+            const resp = await fetchConToken(`/api/citas/${id}/aceptar-reprogramacion`, { method: "PUT" });
+            if (!resp.ok) { alert(await resp.text()); return; }
+            cargarCitas();
+        }
+        async function rechazarReprogramacion(id) {
+            if (!confirm("¿Rechazar la nueva hora?")) return;
+            const resp = await fetchConToken(`/api/citas/${id}/rechazar-reprogramacion`, { method: "PUT" });
+            if (!resp.ok) { alert(await resp.text()); return; }
+            cargarCitas();
+        }
+
+        // -----------------------------------------
+        // Utilidad
+        // -----------------------------------------
+        function formatearFecha(fecha) {
+            if (!fecha) return "—";
+            const [y, m, d] = fecha.split("-");
+            return `${d}/${m}/${y}`;
+        }
+    </script>
+
+</body>
+</html>
